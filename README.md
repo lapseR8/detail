@@ -64,4 +64,6 @@ npm run build:arm  # build the macOS .dmg
 npm run build:win  # build the Windows installer + portable .exe (unverified on real Windows)
 ```
 
-Not licensed for redistribution (`"license": "UNLICENSED"` in `package.json`, intentional for now).
+## License
+
+MIT — see [`LICENSE`](./LICENSE). Use it, fork it, ship it, modify it, sell what you build with it; just keep the copyright notice.
