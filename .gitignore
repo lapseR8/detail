@@ -1,0 +1,22 @@
+# Dependencies (reinstall via `npm install`; package-lock.json is committed for reproducibility)
+node_modules/
+
+# Build output (regenerate via `npm run build:arm` / `npm run build:win`)
+dist/
+
+# Old branded .dmg's kept for reference, not source — see CLAUDE.md's
+# 2026-07-19 cleanup audit for why these were kept locally instead of deleted.
+# Excluded from git regardless: 182MB of binaries with no diff value.
+archive/
+
+# OS cruft
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*

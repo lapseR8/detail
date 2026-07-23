@@ -1,0 +1,3019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Detail — by Campaigner Studios</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none';">
+<script src="vendor/html2canvas.min.js"></script>
+<style>
+  :root{
+    /* Detail — Campaigner Studios product palette. Chrome stays dark-mode
+       native, but tuned toward navy rather than neutral/warm black, with a
+       more muted copper accent (lower saturation, pulled toward red) —
+       deliberately distanced from the bright-orange-on-warm-black look
+       that reads as adult-site branding. */
+    --bg:#0f152c;
+    --panel:#151c39;
+    --panel-2:#1b2545;
+    --line:#273353;
+    --ink:#e9ebee;
+    --muted:#9da6bc;
+    --accent:#ff5e1a;
+    --accent-dark:#e0480a;
+    --accent-ink:#2b0e00;
+    --brand-black:#0d1325;
+    --row-h:34px;
+    --team-row-h:34px;
+    --mini-row-h:30px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;height:100%;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    display:flex;
+    flex-direction:column;
+    height:100vh;
+    overflow:hidden;
+  }
+
+  /* ---------- Toolbar ---------- */
+  #toolbar{
+    background:var(--panel);
+    border-bottom:1px solid var(--line);
+    padding:11px 18px;
+    display:flex;
+    align-items:center;
+    gap:16px;
+    flex-wrap:wrap;
+    flex:none;
+    box-shadow:0 1px 0 rgba(0,0,0,.25);
+  }
+  #toolbar .grp{display:flex;align-items:center;gap:8px;position:relative;}
+  .brand-lockup{display:flex;align-items:center;gap:9px;padding-right:14px;margin-right:2px;border-right:1px solid var(--line);}
+  .brand-mark{
+    width:26px;height:26px;border-radius:7px;background:#fff;border:1.5px solid var(--accent);
+    display:flex;align-items:center;justify-content:center;flex:none;
+  }
+  .brand-mark span{color:var(--brand-black);font-weight:800;font-size:13px;font-family:Georgia,'Times New Roman',serif;}
+  .brand-text{display:flex;flex-direction:column;line-height:1.15;}
+  .brand-name{font-size:14.5px;font-weight:800;color:var(--ink);letter-spacing:.01em;}
+  .brand-name sup{font-size:8px;color:var(--muted);font-weight:600;margin-left:1px;}
+  .brand-sub{font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-weight:700;}
+  #toolbar label{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;}
+  #toolbar input[type=date]{
+    border:1px solid var(--line);border-radius:7px;padding:6px 9px;font-size:13px;
+    background:var(--panel-2);color:var(--ink);color-scheme:dark;
+  }
+  #toolbar input[type=text]{
+    border:1px solid var(--line);border-radius:7px;padding:6px 9px;font-size:13px;
+    background:var(--panel-2);color:var(--ink);width:150px;
+  }
+  .btn{
+    border:1px solid var(--line);
+    background:var(--panel-2);
+    border-radius:8px;
+    padding:7px 13px;
+    font-size:13px;
+    font-weight:600;
+    cursor:pointer;
+    color:var(--ink);
+    transition:background .12s, border-color .12s, transform .05s;
+    letter-spacing:.01em;
+    white-space:nowrap;
+  }
+  .btn:hover{background:#2a2f38;border-color:#383d46;}
+  .btn:active{transform:translateY(1px);}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700;}
+  .btn.primary:hover{background:#ff7f47;}
+  .btn.ghost{background:transparent;}
+  .btn.active-toggle{background:var(--ink);color:var(--bg);border-color:var(--ink);}
+  .spacer{flex:1;}
+  .len-set{display:flex;gap:4px;}
+  .len-btn{
+    border:1px solid var(--line);background:var(--panel-2);border-radius:7px;
+    min-width:34px;height:28px;padding:0 8px;font-size:12px;font-weight:700;cursor:pointer;color:var(--ink);
+  }
+  .len-btn:hover{border-color:#3a3f48;}
+  .len-btn.active{background:var(--ink);color:var(--bg);border-color:var(--ink);}
+  .custom-panel{
+    position:absolute;top:36px;left:0;background:var(--panel-2);border:1px solid var(--line);
+    border-radius:9px;padding:10px;display:none;gap:8px;flex-direction:column;z-index:60;
+    box-shadow:0 8px 24px rgba(0,0,0,.4);min-width:180px;
+  }
+  .custom-panel.open{display:flex;}
+  .custom-panel .row{display:flex;align-items:center;gap:6px;}
+  .custom-panel label{font-size:11px;color:var(--muted);text-transform:none;letter-spacing:0;font-weight:600;}
+  .custom-panel input[type=number]{
+    width:56px;border:1px solid var(--line);border-radius:6px;padding:5px 6px;
+    background:var(--panel);color:var(--ink);font-size:13px;
+  }
+  #import-file{display:none;}
+
+  /* ---------- Layout ---------- */
+  #main{flex:1;display:flex;min-height:0;}
+  #sidebar{
+    width:220px;flex:none;background:var(--panel);border-right:1px solid var(--line);
+    padding:16px;overflow-y:auto;overflow-x:hidden;transition:width .15s ease, padding .15s ease;
+  }
+  body.sidebar-hidden #sidebar{width:0;padding-left:0;padding-right:0;border-right:none;}
+  body.sidebar-hidden #sidebar > *{display:none;}
+  #sidebar-handle{
+    flex:none;width:16px;align-self:stretch;border:none;border-right:1px solid var(--line);
+    background:var(--panel-2);color:var(--muted);cursor:pointer;font-size:11px;
+    display:flex;align-items:center;justify-content:center;padding:0;
+  }
+  #sidebar-handle:hover{background:#2a2f38;color:var(--ink);}
+  #sidebar h3{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 10px;}
+  .person-row{
+    display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:9px;margin-bottom:5px;
+    background:var(--panel-2);border:1px solid var(--line);cursor:grab;user-select:none;
+  }
+  .person-row:hover{border-color:#3a3f48;}
+  .person-row:active{cursor:grabbing;}
+  .person-row.armed{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent);}
+  .person-row:focus-visible, .day-col:focus-visible, .team-day-header:focus-visible, #team-day-lanes:focus-visible{
+    outline:2px solid var(--accent);outline-offset:-2px;
+  }
+  .person-row input[type=text]{
+    border:none;background:transparent;font-size:13px;font-weight:600;width:100%;color:var(--ink);
+  }
+  .person-row input[type=color]{width:20px;height:20px;border:none;padding:0;background:none;flex:none;cursor:pointer;border-radius:5px;overflow:hidden;}
+  .person-row .rm{flex:none;border:none;background:none;color:var(--muted);cursor:pointer;font-size:14px;line-height:1;}
+  .person-row .rm:hover{color:#e0645a;}
+  #add-person{width:100%;margin-top:8px;}
+  .hint{font-size:11.5px;color:var(--muted);line-height:1.55;margin-top:16px;}
+  .legal-footer{
+    font-size:10px;color:var(--muted);line-height:1.6;margin-top:22px;padding-top:14px;
+    border-top:1px solid var(--line);opacity:.75;
+  }
+  .legal-footer b{color:var(--muted);}
+
+  #schedule-wrap{
+    flex:1;overflow:auto;padding:13px;background:var(--bg);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+  }
+  #schedule-capture{
+    background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 14px 40px rgba(0,0,0,.5);
+    width:100%;
+  }
+
+  /* ---------- Header block (captured) ---------- */
+  #sched-header{
+    background:var(--brand-black);color:#fff;padding:22px 28px;
+    display:flex;justify-content:space-between;align-items:flex-start;gap:20px;
+    border-bottom:3px solid var(--accent);
+  }
+  #sched-title{
+    font-size:26px;font-weight:800;letter-spacing:.02em;margin:0 0 6px;outline:none;
+  }
+  .week-of{font-size:13px;font-weight:600;}
+  .week-of span{font-weight:800;color:var(--accent);}
+  .org-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin-bottom:3px;}
+  .sup-block{text-align:right;}
+  #sup-name{font-size:16px;font-style:italic;font-weight:700;outline:none;}
+  #sup-role{font-size:12.5px;font-style:italic;opacity:.9;outline:none;}
+
+  /* ---------- Week grid ---------- */
+  #grid-body{display:flex;}
+  .time-col{flex:none;width:78px;border-right:1px solid #e3e5e2;background:#fbfbfa;}
+  .time-col .cell{
+    height:var(--row-h);font-size:11.5px;color:#7a7f7a;text-align:right;padding-right:8px;
+    display:flex;align-items:flex-start;justify-content:flex-end;padding-top:2px;
+    border-bottom:1px solid #eee;
+  }
+  .day-headers{display:flex;}
+  .day-header{
+    flex:1;min-width:130px;text-align:center;padding:10px 4px;border-right:1px solid #e3e5e2;
+    border-bottom:1px solid #e3e5e2;background:#fff;
+  }
+  .day-header .dow{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:#20242b;}
+  .day-header .dnum{font-size:11px;color:#7a7f7a;}
+  .time-corner{flex:none;width:78px;border-right:1px solid #e3e5e2;border-bottom:1px solid #e3e5e2;background:#fbfbfa;}
+
+  .day-col{
+    flex:1 1 130px;min-width:130px;position:relative;border-right:1px solid #e3e5e2;background:#fff;
+    /* Hour lines as a CSS gradient, not DOM nodes — free on every render.
+       Real DOM lines are injected only during screenshot capture (see
+       injectCaptureGridLines), since that's the one context where they're
+       load-bearing (html2canvas support for gradients is inconsistent). */
+    background-image:repeating-linear-gradient(to bottom, transparent 0, transparent calc(var(--row-h) - 1px), #e7e9e6 calc(var(--row-h) - 1px), #e7e9e6 var(--row-h));
+  }
+  .day-col.dragover{outline:2px dashed var(--accent);outline-offset:-2px;}
+  .grid-line{position:absolute;left:0;right:0;height:1px;background:#e7e9e6;pointer-events:none;}
+  .grid-line.shift-line{background:rgba(0,0,0,.16);}
+
+  .shift{
+    position:absolute;left:2px;right:2px;border-radius:7px;
+    padding:5px 7px;font-size:12.5px;font-weight:700;color:#26301f;
+    overflow:hidden;cursor:grab;border:1px solid rgba(0,0,0,.14);
+    box-shadow:0 1px 1px rgba(0,0,0,.06);
+    background-image:repeating-linear-gradient(to bottom, transparent 0, transparent calc(var(--row-h) - 1px), rgba(0,0,0,.16) calc(var(--row-h) - 1px), rgba(0,0,0,.16) var(--row-h));
+  }
+  .shift:active{cursor:grabbing;}
+  .shift .label-text{position:relative;z-index:2;}
+  .shift .len-label{font-size:10.5px;font-weight:700;opacity:.75;display:block;position:relative;z-index:2;}
+  .shift .rs{
+    position:absolute;left:0;right:0;bottom:0;height:8px;cursor:ns-resize;z-index:3;
+  }
+  .shift .rs-top{
+    position:absolute;left:0;right:0;top:0;height:8px;cursor:ns-resize;z-index:3;
+  }
+  body.capturing .shift .rs,
+  body.capturing .shift .rs-top,
+  body.capturing .shift .del{display:none !important;}
+  .shift .del{
+    position:absolute;top:2px;right:4px;border:none;background:none;font-size:12px;
+    cursor:pointer;color:rgba(0,0,0,.45);line-height:1;z-index:3;
+  }
+  .shift .del:hover{color:#c0392b;}
+  .shift, .shift *{user-select:none;-webkit-user-select:none;}
+  .shift, .shift .rs{touch-action:none;}
+  .shift.dragging-ghost{
+    box-shadow:0 16px 34px rgba(0,0,0,.45);
+    opacity:.96;
+    cursor:grabbing;
+    transition:none;
+    margin:0;
+    will-change:left, top;
+  }
+  .shift.drag-source-hidden{opacity:0;}
+  body.no-select, body.no-select *{
+    user-select:none !important;-webkit-user-select:none !important;
+  }
+
+  /* ---------- Month view ---------- */
+  #month-view{display:none;background:#fff;border-radius:12px;box-shadow:0 14px 40px rgba(0,0,0,.5);overflow:hidden;}
+  .month-header{
+    display:flex;align-items:center;justify-content:center;gap:16px;
+    background:var(--brand-black);color:#fff;padding:16px;border-bottom:3px solid var(--accent);
+  }
+  .month-header #month-label{font-size:17px;font-weight:800;min-width:170px;text-align:center;}
+  .month-nav-btn{
+    border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.08);color:#fff;
+    border-radius:7px;width:30px;height:30px;font-size:15px;cursor:pointer;
+  }
+  .month-nav-btn:hover{background:rgba(255,255,255,.18);}
+  .month-dow-row{display:flex;background:#fbfbfa;border-bottom:1px solid #e3e5e2;}
+  .month-dow-row div{flex:1;text-align:center;padding:8px 4px;font-size:11px;font-weight:800;color:#7a7f7a;text-transform:uppercase;letter-spacing:.04em;}
+  .month-week-row{display:flex;border-bottom:1px solid #e3e5e2;cursor:pointer;transition:background .1s;}
+  .month-week-row:hover{background:#f3f7f4;}
+  .month-week-row.active{background:#ffece0;box-shadow:inset 3px 0 0 var(--accent);}
+  .month-day-cell{
+    flex:1;min-height:64px;padding:8px;border-right:1px solid #eee;font-size:13px;font-weight:700;color:#26301f;
+    position:relative;
+  }
+  .month-day-cell.other-month{color:#c7cac6;background:#fbfbfa;}
+  .month-day-cell .dnum{display:inline-block;}
+  .month-day-cell.today .dnum{
+    background:var(--accent);color:var(--accent-ink);width:22px;height:22px;border-radius:50%;
+    display:inline-flex;align-items:center;justify-content:center;font-size:12px;
+  }
+  .month-footer-hint{padding:12px 16px;font-size:12px;color:#7a7f7a;text-align:center;background:#fbfbfa;}
+
+  /* ---------- Bottom week tabs ---------- */
+  #week-tabs{
+    flex:none;display:flex;align-items:center;gap:6px;background:var(--panel);
+    border-top:1px solid var(--line);padding:7px 14px;overflow-x:auto;
+  }
+  .tabs-nav-btn{
+    border:1px solid var(--line);background:var(--panel-2);color:var(--ink);
+    border-radius:6px;width:26px;height:26px;font-size:13px;cursor:pointer;flex:none;
+  }
+  .tabs-nav-btn:hover{background:#2a2f38;}
+  #tabs-list{display:flex;gap:5px;flex:1;overflow-x:auto;}
+  .tab{
+    flex:1 1 0;min-width:0;padding:6px 10px;border-radius:7px;background:var(--panel-2);border:1px solid var(--line);
+    font-size:12.5px;font-weight:600;cursor:pointer;color:var(--muted);white-space:nowrap;
+    text-align:center;overflow:hidden;text-overflow:ellipsis;
+  }
+  .tab:hover{color:var(--ink);border-color:#3a3f48;}
+  .tab.active{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700;}
+  .tab.has-shifts::after{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;background:currentColor;margin-left:6px;opacity:.6;vertical-align:middle;}
+  #tabs-today{flex:none;}
+
+  /* popover (left click) */
+  #popover{
+    position:fixed;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;
+    box-shadow:0 10px 28px rgba(0,0,0,.5);padding:10px;display:none;z-index:70;gap:8px;flex-direction:column;
+    color:var(--ink);
+  }
+  #pop-close{
+    position:absolute;top:6px;right:6px;border:none;background:none;
+    color:var(--muted);font-size:13px;line-height:1;cursor:pointer;padding:3px;
+  }
+  #pop-close:hover{color:var(--ink);}
+  #popover .row{display:flex;gap:5px;align-items:center;}
+  #popover select{font-size:12px;padding:4px 6px;border-radius:6px;border:1px solid var(--line);background:var(--panel);color:var(--ink);}
+  body.capturing #popover{display:none !important;}
+
+  /* context menu (right click) */
+  #ctx-menu{
+    position:fixed;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;
+    box-shadow:0 10px 28px rgba(0,0,0,.5);padding:6px;display:none;z-index:80;min-width:170px;
+  }
+  #ctx-menu .ctx-item{
+    padding:8px 10px;border-radius:6px;font-size:13px;cursor:pointer;color:var(--ink);
+    display:flex;align-items:center;gap:8px;
+  }
+  #ctx-menu .ctx-item:hover{background:#2c313a;}
+  #ctx-menu .ctx-item.disabled{color:var(--muted);cursor:not-allowed;}
+  #ctx-menu .ctx-item.disabled:hover{background:none;}
+  #ctx-menu .ctx-sep{height:1px;background:var(--line);margin:4px 2px;}
+  #ctx-menu .ctx-back{font-weight:700;color:var(--muted);}
+  #ctx-menu .ctx-person{display:flex;align-items:center;gap:8px;}
+  #ctx-menu .ctx-swatch{width:12px;height:12px;border-radius:4px;flex:none;}
+  body.capturing #ctx-menu{display:none !important;}
+
+  ::-webkit-scrollbar{width:10px;height:10px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:#33383f;border-radius:6px;}
+
+  /* =========================================================
+     TEAM MODE — fully separate view. Shares only generic utility
+     classes (.btn, .len-set, .tab, .person-row, .custom-panel, .week-of)
+     and the viewport-fit ROW_H system with single mode.
+     ========================================================= */
+  .mode-switch{display:flex;gap:4px;background:var(--panel-2);border:1px solid var(--line);border-radius:9px;padding:3px;}
+  .mode-btn{border:none;background:transparent;color:var(--muted);border-radius:6px;padding:6px 14px;font-size:12.5px;font-weight:700;cursor:pointer;}
+  .mode-btn:hover{color:var(--ink);}
+  .mode-btn.active-toggle{background:var(--accent);color:var(--accent-ink);}
+
+  body:not(.team-mode) .team-only{display:none !important;}
+  body.team-mode .single-only{display:none !important;}
+  /* Defense-in-depth for the Single→Team stale-UI gap: switching modes
+     already triggers a document-level click that closes these (see the
+     single-mode click listener + the mode-changed handshake below), but
+     this guarantees it visually even if that ordering ever changes. */
+  body.team-mode #popover, body.team-mode #ctx-menu{display:none !important;}
+
+  #team-sidebar{
+    width:220px;flex:none;background:var(--panel);border-right:1px solid var(--line);
+    padding:16px;overflow-y:auto;overflow-x:hidden;transition:width .15s ease, padding .15s ease;
+  }
+  body.team-sidebar-hidden #team-sidebar{width:0;padding-left:0;padding-right:0;border-right:none;}
+  body.team-sidebar-hidden #team-sidebar > *{display:none;}
+  #team-sidebar-handle{
+    flex:none;width:16px;align-self:stretch;border:none;border-right:1px solid var(--line);
+    background:var(--panel-2);color:var(--muted);cursor:pointer;font-size:11px;
+    display:flex;align-items:center;justify-content:center;padding:0;
+  }
+  #team-sidebar-handle:hover{background:#2a2f38;color:var(--ink);}
+  #team-sidebar h3{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 10px;}
+
+  #team-main{flex:1;display:flex;min-height:0;position:relative;}
+  #team-schedule-wrap{
+    flex:1;overflow:auto;padding:13px;background:var(--bg);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    position:relative;
+  }
+  #team-schedule-capture{
+    background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 14px 40px rgba(0,0,0,.5);
+    width:100%;
+  }
+  #team-sched-header{
+    background:var(--brand-black);color:#fff;padding:22px 28px;
+    display:flex;justify-content:space-between;align-items:flex-start;gap:20px;
+    border-bottom:3px solid var(--accent);
+  }
+  #team-sched-title{font-size:26px;font-weight:800;letter-spacing:.02em;margin:0 0 6px;outline:none;}
+  #team-day-headers-row{display:flex;}
+
+  /* Compact week view: up to 10 overlap-packed color slivers per day, no
+     text (there's no room at this zoom) — click a day to see who's who. */
+  .team-day-header{
+    flex:1;min-width:130px;text-align:center;padding:10px 4px;border-right:1px solid #e3e5e2;
+    border-bottom:1px solid #e3e5e2;background:#fff;cursor:pointer;
+  }
+  .team-day-header:hover{background:#fbf6f2;}
+  .team-day-header .dow{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:#20242b;}
+  .team-day-header .dnum{font-size:11px;color:#7a7f7a;}
+  .team-day-header .expand-hint{font-size:9.5px;color:var(--accent-dark);text-transform:uppercase;letter-spacing:.05em;font-weight:700;margin-top:2px;}
+  #team-day-cols{display:flex;flex:1;}
+  .team-day-col-mini{
+    flex:1 1 130px;min-width:130px;position:relative;border-right:1px solid #e3e5e2;background:#fff;
+    cursor:pointer;
+    height:calc(var(--mini-row-h) * 24);
+    background-image:repeating-linear-gradient(to bottom, transparent 0, transparent calc(var(--mini-row-h) - 1px), #e7e9e6 calc(var(--mini-row-h) - 1px), #e7e9e6 var(--mini-row-h));
+  }
+  .team-day-col-mini:hover{background-color:#fbf6f2;}
+  .team-day-col-mini.dragover{outline:2px dashed var(--accent);outline-offset:-2px;}
+  .team-mini-shift{position:absolute;border-radius:3px;min-height:3px;opacity:.92;box-sizing:border-box;border:1px solid rgba(0,0,0,.15);overflow:hidden;pointer-events:none;transition:left .28s cubic-bezier(.22,.9,.32,1), width .28s cubic-bezier(.22,.9,.32,1);}
+  .team-mini-shift .mini-label{
+    position:absolute;top:1px;left:3px;right:3px;
+    font-size:8.5px;font-weight:700;color:rgba(0,0,0,.72);line-height:1.15;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+
+  /* Expanded single-day view — floats centered over the schedule area (not
+     the toolbar/tabs) while the rest dims and blurs behind it. Width is
+     driven entirely by JS (computePanelWidth) and animates via the
+     transition below whenever the day's concurrent-person count changes. */
+  #team-day-overlay{
+    position:absolute;inset:0;z-index:150;
+    opacity:0;visibility:hidden;pointer-events:none;
+    transition:opacity .22s ease, visibility 0s linear .22s;
+  }
+  #team-day-overlay.open{
+    opacity:1;visibility:visible;pointer-events:auto;
+    transition:opacity .22s ease, visibility 0s linear;
+  }
+  #team-day-backdrop{position:absolute;inset:0;background:rgba(8,11,20,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);}
+  #team-day-panel{
+    position:absolute;top:50%;left:50%;
+    width:340px;
+    max-width:calc(100% - 24px);
+    height:560px;
+    max-height:calc(100% - 24px);
+    background:#fff;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.55);
+    display:flex;flex-direction:column;overflow:hidden;
+    transform:translate(-50%,-50%) scale(.94);
+    opacity:0;
+    transition:width .32s cubic-bezier(.22,.9,.32,1), transform .24s cubic-bezier(.22,.9,.32,1), opacity .2s ease;
+  }
+  #team-day-overlay.open #team-day-panel{
+    transform:translate(-50%,-50%) scale(1);
+    opacity:1;
+  }
+  #team-day-panel-header{
+    background:var(--brand-black);color:#fff;padding:16px 22px;display:flex;align-items:center;justify-content:space-between;
+    border-bottom:3px solid var(--accent);flex:none;
+  }
+  #team-day-title{font-size:17px;font-weight:800;}
+  #team-day-clear{border:none;background:rgba(255,255,255,.1);color:#fff;padding:0 12px;height:30px;border-radius:7px;font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap;}
+  #team-day-clear:hover{background:rgba(255,255,255,.2);}
+  #team-day-close{border:none;background:rgba(255,255,255,.1);color:#fff;width:30px;height:30px;border-radius:7px;font-size:14px;cursor:pointer;}
+  #team-day-close:hover{background:rgba(255,255,255,.2);}
+  #team-day-body{flex:1;display:flex;overflow:auto;min-height:0;}
+  #team-day-time-col{flex:none;width:78px;border-right:1px solid #e3e5e2;background:#fbfbfa;}
+  #team-day-time-col .cell{
+    height:var(--team-row-h);font-size:11.5px;color:#7a7f7a;text-align:right;padding-right:8px;
+    display:flex;align-items:flex-start;justify-content:flex-end;padding-top:2px;border-bottom:1px solid #eee;
+  }
+  #team-day-lanes{flex:1;display:flex;position:relative;}
+  .team-lane{
+    flex:1 1 0;min-width:0;position:relative;border-right:1px solid #e3e5e2;background:#fff;
+    transition:flex-basis .28s cubic-bezier(.22,.9,.32,1);
+    background-image:repeating-linear-gradient(to bottom, transparent 0, transparent calc(var(--team-row-h) - 1px), #e7e9e6 calc(var(--team-row-h) - 1px), #e7e9e6 var(--team-row-h));
+  }
+  .team-lane.dragover{outline:2px dashed var(--accent);outline-offset:-2px;}
+
+  .team-shift{
+    position:absolute;left:2px;right:2px;border-radius:7px;
+    padding:5px 7px;font-size:12px;font-weight:700;color:#26301f;
+    overflow:hidden;cursor:grab;border:1px solid rgba(0,0,0,.14);
+    box-shadow:0 1px 1px rgba(0,0,0,.06);
+    background-image:repeating-linear-gradient(to bottom, transparent 0, transparent calc(var(--team-row-h) - 1px), rgba(0,0,0,.16) calc(var(--team-row-h) - 1px), rgba(0,0,0,.16) var(--team-row-h));
+  }
+  .team-shift:active{cursor:grabbing;}
+  .team-shift .label-text{position:relative;z-index:2;}
+  .team-shift .len-label{font-size:10px;font-weight:700;opacity:.75;display:block;position:relative;z-index:2;}
+  .team-shift .rs, .team-shift .rs-top{position:absolute;left:0;right:0;height:8px;cursor:ns-resize;z-index:3;}
+  .team-shift .rs{bottom:0;}
+  .team-shift .rs-top{top:0;}
+  .team-shift .del{position:absolute;top:2px;right:4px;border:none;background:none;font-size:12px;cursor:pointer;color:rgba(0,0,0,.45);line-height:1;z-index:3;}
+  .team-shift .del:hover{color:#c0392b;}
+  .team-shift, .team-shift *{user-select:none;-webkit-user-select:none;}
+  .team-shift, .team-shift .rs, .team-shift .rs-top{touch-action:none;}
+  .team-shift.dragging-ghost{box-shadow:0 16px 34px rgba(0,0,0,.45);opacity:.96;cursor:grabbing;transition:none;margin:0;will-change:left, top;}
+  .team-shift.drag-source-hidden{opacity:0;}
+
+  #team-week-tabs{
+    flex:none;display:flex;align-items:center;gap:6px;background:var(--panel);
+    border-top:1px solid var(--line);padding:7px 14px;overflow-x:auto;
+  }
+  /* Bug fix (2026-07-18): this rule was missing entirely, so #team-tabs-list
+     fell back to being a plain block-level div — every .tab child (also a
+     div) stacked full-width instead of sitting in a horizontal scrolling
+     row, which is what made the bar balloon to ~30% of the screen height.
+     Single mode's #tabs-list had the equivalent rule all along; team mode's
+     never got written. */
+  #team-tabs-list{display:flex;gap:5px;flex:1;overflow-x:auto;}
+
+  #team-popover{
+    position:fixed;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;
+    box-shadow:0 10px 28px rgba(0,0,0,.5);padding:10px;display:none;z-index:200;gap:8px;flex-direction:column;
+    color:var(--ink);
+  }
+  #team-pop-close{position:absolute;top:6px;right:6px;border:none;background:none;color:var(--muted);font-size:13px;line-height:1;cursor:pointer;padding:3px;}
+  #team-pop-close:hover{color:var(--ink);}
+  #team-popover .row{display:flex;gap:5px;align-items:center;}
+  #team-popover select{font-size:12px;padding:4px 6px;border-radius:6px;border:1px solid var(--line);background:var(--panel);color:var(--ink);}
+
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{
+      animation-duration:0.001ms !important;
+      animation-iteration-count:1 !important;
+      transition-duration:0.001ms !important;
+      scroll-behavior:auto !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div id="toolbar">
+  <div class="brand-lockup" title="Detail — a Campaigner Studios product">
+    <div class="brand-mark"><span>D</span></div>
+    <div class="brand-text">
+      <span class="brand-name">Detail<sup>™</sup></span>
+      <span class="brand-sub">Campaigner Studios</span>
+    </div>
+  </div>
+  <div class="grp">
+    <div class="mode-switch">
+      <button class="mode-btn active-toggle" id="mode-single-btn">Single</button>
+      <button class="mode-btn" id="mode-team-btn">Team</button>
+    </div>
+  </div>
+  <div class="grp single-only">
+    <label>Organization</label>
+    <input type="text" id="organization" list="org-history" placeholder="e.g. Acme Corp">
+    <datalist id="org-history"></datalist>
+  </div>
+  <div class="grp single-only">
+    <label>Pay period (Fri&ndash;Thu)</label>
+    <input type="date" id="week-start">
+  </div>
+  <div class="grp single-only">
+    <button class="btn" id="view-toggle">Month view</button>
+  </div>
+  <div class="grp single-only">
+    <label>Default length</label>
+    <div class="len-set" id="default-len-set"></div>
+    <div class="custom-panel" id="default-custom">
+      <div class="row"><label>Hours</label><input type="number" id="default-h" min="0" max="24" value="0"></div>
+      <div class="row"><label>Minutes</label><input type="number" id="default-m" min="0" max="59" step="5" value="0"></div>
+      <button class="btn primary" id="default-custom-apply">Set length</button>
+    </div>
+  </div>
+  <div class="grp single-only">
+    <button class="btn" id="load-sample">Load sample</button>
+    <button class="btn ghost" id="clear-week">Clear week</button>
+  </div>
+  <div class="spacer single-only"></div>
+  <div class="grp single-only">
+    <button class="btn ghost" id="export-data-btn">Backup data</button>
+    <button class="btn ghost" id="import-data-btn">Restore backup</button>
+    <input type="file" id="import-file" accept="application/json">
+  </div>
+  <button class="btn single-only" id="copy-btn">Copy image</button>
+  <button class="btn primary single-only" id="export-btn">Export screenshot</button>
+
+  <div class="grp team-only">
+    <label>Organization</label>
+    <input type="text" id="team-organization" list="team-org-history" placeholder="e.g. Acme Corp">
+    <datalist id="team-org-history"></datalist>
+  </div>
+  <div class="grp team-only">
+    <label>Team pay period (Fri&ndash;Thu)</label>
+    <input type="date" id="team-week-start">
+  </div>
+  <div class="grp team-only">
+    <label>Default length</label>
+    <div class="len-set" id="team-default-len-set"></div>
+    <div class="custom-panel" id="team-default-custom">
+      <div class="row"><label>Hours</label><input type="number" id="team-default-h" min="0" max="24" value="0"></div>
+      <div class="row"><label>Minutes</label><input type="number" id="team-default-m" min="0" max="59" step="5" value="0"></div>
+      <button class="btn primary" id="team-default-custom-apply">Set length</button>
+    </div>
+  </div>
+  <div class="grp team-only">
+    <button class="btn ghost" id="team-clear-week">Clear week</button>
+  </div>
+  <div class="spacer team-only"></div>
+</div>
+
+<div id="main" class="single-only">
+  <aside id="sidebar">
+    <h3>Team (drag onto grid)</h3>
+    <div id="people-list"></div>
+    <button class="btn" id="add-person">+ Add person</button>
+    <div class="hint">Drag a name onto the schedule to add a shift — it automatically snaps to the end of whatever's already there in that column. Drag an existing shift to move it, drag either edge to resize (top edge extends the start time earlier, bottom edge extends the end later), left-click for exact options, or right-click for copy/cut/paste and quick guard swaps.</div>
+    <div class="hint">Switch to <strong>Month view</strong> to jump to any pay period, or use the tabs at the bottom to hop between nearby weeks. Every week's shifts are saved on their own.</div>
+    <div class="legal-footer">Detail&trade; — a scheduling product by <b>Campaigner Studios</b>.<br>Beta build. &copy; <span id="legal-year"></span> Campaigner Studios. All rights reserved.</div>
+  </aside>
+  <button id="sidebar-handle" class="single-only" title="Hide roster" aria-label="Hide roster">‹</button>
+
+  <div id="schedule-wrap">
+    <div id="schedule-capture">
+      <div id="sched-header">
+        <div>
+          <div class="org-label" id="org-label"></div>
+          <h1 id="sched-title" contenteditable="true" spellcheck="false">WEEKLY SCHEDULE</h1>
+          <div class="week-of">Week of: <span id="week-of-label">—</span></div>
+        </div>
+        <div class="sup-block">
+          <div id="sup-name" contenteditable="true" spellcheck="false">Your Name</div>
+          <div id="sup-role" contenteditable="true" spellcheck="false">Site Supervisor</div>
+        </div>
+      </div>
+
+      <div class="day-headers">
+        <div class="time-corner"></div>
+        <div id="day-headers-row" style="display:flex;flex:1;"></div>
+      </div>
+
+      <div id="grid-body">
+        <div class="time-col" id="time-col"></div>
+        <div id="day-cols" style="display:flex;flex:1;"></div>
+      </div>
+    </div>
+
+    <div id="month-view">
+      <div class="month-header">
+        <button class="month-nav-btn" id="month-prev" aria-label="Previous month">‹</button>
+        <div id="month-label">—</div>
+        <button class="month-nav-btn" id="month-next" aria-label="Next month">›</button>
+      </div>
+      <div class="month-dow-row">
+        <div>FRI</div><div>SAT</div><div>SUN</div><div>MON</div><div>TUE</div><div>WED</div><div>THU</div>
+      </div>
+      <div id="month-rows"></div>
+      <div class="month-footer-hint">Click any week to open it. Shifts aren't shown here — this is just for getting around.</div>
+    </div>
+  </div>
+</div>
+
+<div id="week-tabs" class="single-only">
+  <button class="tabs-nav-btn" id="tabs-prev" aria-label="Previous week">‹</button>
+  <div id="tabs-list"></div>
+  <button class="tabs-nav-btn" id="tabs-next" aria-label="Next week">›</button>
+  <button class="btn" id="tabs-today">Today</button>
+</div>
+
+<div id="team-main" class="team-only">
+  <aside id="team-sidebar">
+    <h3>Team roster (drag into a day)</h3>
+    <div id="team-people-list"></div>
+    <button class="btn" id="team-add-person">+ Add person</button>
+    <div class="hint">Click a day to open it, then drag a name from here onto the timeline to add a shift. Up to 10 people can be scheduled at once &mdash; overlapping shifts stack side by side automatically. Drag a shift to move it, either edge to resize, or click it to reassign the person or length.</div>
+  </aside>
+  <button id="team-sidebar-handle" title="Hide roster" aria-label="Hide roster">‹</button>
+
+  <div id="team-schedule-wrap">
+    <div id="team-schedule-capture">
+      <div id="team-sched-header">
+        <div>
+          <div class="org-label" id="team-org-label"></div>
+          <h1 id="team-sched-title" contenteditable="true" spellcheck="false">TEAM SCHEDULE</h1>
+          <div class="week-of">Week of: <span id="team-week-of-label">—</span></div>
+        </div>
+        <div class="sup-block">
+          <div id="team-sup-name" contenteditable="true" spellcheck="false">Your Name</div>
+          <div id="team-sup-role" contenteditable="true" spellcheck="false">Site Supervisor</div>
+        </div>
+      </div>
+      <div id="team-day-headers-row"></div>
+      <div id="team-day-cols"></div>
+    </div>
+
+    <div id="team-day-overlay">
+      <div id="team-day-backdrop"></div>
+      <div id="team-day-panel">
+        <div id="team-day-panel-header">
+          <div id="team-day-title">—</div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <button id="team-day-clear" title="Clear this day" aria-label="Clear all shifts from this day">Clear day</button>
+            <button id="team-day-close" title="Close" aria-label="Close day view">✕</button>
+          </div>
+        </div>
+        <div id="team-day-body">
+          <div id="team-day-time-col"></div>
+          <div id="team-day-lanes"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="team-week-tabs" class="team-only">
+  <button class="tabs-nav-btn" id="team-tabs-prev" aria-label="Previous week">‹</button>
+  <div id="team-tabs-list"></div>
+  <button class="tabs-nav-btn" id="team-tabs-next" aria-label="Next week">›</button>
+  <button class="btn" id="team-tabs-today">Today</button>
+</div>
+
+<div id="popover">
+  <button id="pop-close" title="Close" aria-label="Close">✕</button>
+  <div class="row">
+    <select id="pop-person"></select>
+  </div>
+  <div class="len-set" id="pop-len" style="position:relative;"></div>
+  <div class="custom-panel" id="pop-custom">
+    <div class="row"><label>Hours</label><input type="number" id="pop-h" min="0" max="24" value="0"></div>
+    <div class="row"><label>Minutes</label><input type="number" id="pop-m" min="0" max="59" step="5" value="0"></div>
+    <button class="btn primary" id="pop-custom-apply">Set length</button>
+  </div>
+  <div class="row">
+    <button class="btn ghost" id="pop-delete" style="color:#e0645a;">Delete shift</button>
+  </div>
+</div>
+
+<div id="ctx-menu"></div>
+
+<div id="team-popover">
+  <button id="team-pop-close" title="Close" aria-label="Close">✕</button>
+  <div class="row"><select id="team-pop-person"></select></div>
+  <div class="len-set" id="team-pop-len" style="position:relative;"></div>
+  <div class="custom-panel" id="team-pop-custom">
+    <div class="row"><label>Hours</label><input type="number" id="team-pop-h" min="0" max="24" value="0"></div>
+    <div class="row"><label>Minutes</label><input type="number" id="team-pop-m" min="0" max="59" step="5" value="0"></div>
+    <button class="btn primary" id="team-pop-custom-apply">Set length</button>
+  </div>
+  <div class="row"><button class="btn ghost" id="team-pop-delete" style="color:#e0645a;">Delete shift</button></div>
+</div>
+
+<script>
+(function(){
+  const ROW_H_MIN = 16;
+  let ROW_H = 34;
+  const START_HOUR = 7;
+  const NUM_DAYS = 7;
+  const STORAGE_KEY = "detailScheduleState_v3";
+  const BACKUP_KEY = "detailScheduleState_v3_backup";
+  // Same shape as STORAGE_KEY, just under this app's pre-rebrand key name —
+  // a straight copy-over on load, not a format migration (unlike LEGACY_KEY
+  // below, which is an older shape and needs migrateLegacy()).
+  const OLD_STORAGE_KEY = "hitachiScheduleState_v3";
+  const LEGACY_KEY = "hitachiScheduleState_v2";
+  const ORG_HISTORY_KEY = "detailOrgNames_v1";
+  const LEN_OPTIONS = [4,8,12,16];
+  const TAB_SPAN = 3;
+
+  const DOW = ["SUNDAY","MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY","SATURDAY"];
+
+  function uid(){ return Math.random().toString(36).slice(2,9); }
+  // Formats a Date using its LOCAL y/m/d, not toISOString() (which converts
+  // to UTC first — at local midnight in any positive UTC-offset timezone,
+  // that silently rolls the date back by one, breaking "today" for roughly
+  // half the world for the first several hours after midnight). Every
+  // date->string conversion in this file should go through this, not
+  // .toISOString().slice(0,10).
+  function toDateStr(d){
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,"0");
+    const day = String(d.getDate()).padStart(2,"0");
+    return y+"-"+m+"-"+day;
+  }
+  function todayStr(){ return toDateStr(new Date()); }
+
+  // Builds a Date from a "YYYY-MM-DD" string, falling back to today if the
+  // input is missing, malformed, or otherwise produces an invalid Date —
+  // guards against RangeError: Invalid time value downstream.
+  function safeDate(dateStr){
+    const d = new Date((dateStr || "") + "T00:00:00");
+    if(isNaN(d.getTime())) return new Date(todayStr() + "T00:00:00");
+    return d;
+  }
+  function addDays(dateStr, n){
+    const d = safeDate(dateStr);
+    d.setDate(d.getDate()+n);
+    return toDateStr(d);
+  }
+  function snapToFriday(dateStr){
+    const d = safeDate(dateStr);
+    const dow = d.getDay();
+    const diff = (dow - 5 + 7) % 7;
+    d.setDate(d.getDate() - diff);
+    return toDateStr(d);
+  }
+
+  function defaultState(){
+    return {
+      version: 3,
+      currentWeekStart: snapToFriday(todayStr()),
+      title: "WEEKLY SCHEDULE",
+      organization: "",
+      supervisorName: "Your Name",
+      supervisorRole: "Site Supervisor",
+      defaultLengthMin: 8*60,
+      people: [
+        {id:"p1", name:"J. Rivera", color:"#c79ac2"},
+        {id:"p2", name:"M. Chen",   color:"#a8d5a0"},
+        {id:"p3", name:"A. Patel",  color:"#a9c0ea"},
+        {id:"p4", name:"K. Brooks", color:"#cf6b63"},
+        {id:"p5", name:"S. Nguyen", color:"#f5dd8e"}
+      ],
+      weeks: {}
+    };
+  }
+
+  function sampleShifts(people){
+    const byName = n => people.find(p=>p.name===n)?.id;
+    const s = (day, slot, hrs, name) => ({id:uid(), day, slot, durMin:hrs*60, personId: byName(name)});
+    return [
+      s(0,0,8,"J. Rivera"), s(0,8,8,"A. Patel"), s(0,16,8,"K. Brooks"),
+      s(1,0,12,"M. Chen"), s(1,12,4,"K. Brooks"), s(1,16,8,"K. Brooks"),
+      s(2,0,12,"M. Chen"), s(2,12,4,"K. Brooks"), s(2,16,8,"K. Brooks"),
+      s(3,0,8,"J. Rivera"), s(3,8,8,"A. Patel"), s(3,16,8,"S. Nguyen"),
+      s(4,0,8,"J. Rivera"), s(4,8,8,"A. Patel"), s(4,16,8,"S. Nguyen"),
+      s(5,0,8,"J. Rivera"), s(5,8,8,"A. Patel"), s(5,16,4,"M. Chen"), s(5,20,4,"M. Chen"),
+      s(6,0,8,"J. Rivera"), s(6,8,8,"A. Patel"), s(6,16,8,"K. Brooks")
+    ];
+  }
+
+  function tryParse(raw){ try{ return JSON.parse(raw); }catch(e){ return null; } }
+
+  // Organization name autocomplete history — a deliberate, narrow exception
+  // to Team mode's "own copies of small helpers, never shares state"
+  // isolation rule (see CLAUDE.md). This reads/writes a small shared
+  // suggestion list, not app state — it can't affect the other mode's
+  // schedule data, only what shows up as you type an organization name.
+  function loadOrgHistory(){
+    try{ const arr = JSON.parse(localStorage.getItem(ORG_HISTORY_KEY)||"[]"); return Array.isArray(arr) ? arr : []; }
+    catch(e){ return []; }
+  }
+  function rememberOrg(name){
+    name = (name||"").trim();
+    if(!name) return;
+    const list = [name, ...loadOrgHistory().filter(n=>n!==name)].slice(0,20);
+    try{ localStorage.setItem(ORG_HISTORY_KEY, JSON.stringify(list)); }catch(e){}
+    renderOrgDatalist();
+  }
+  function renderOrgDatalist(){
+    const dl = document.getElementById("org-history");
+    if(!dl) return;
+    dl.innerHTML = "";
+    loadOrgHistory().forEach(n=>{
+      const opt = document.createElement("option");
+      opt.value = n;
+      dl.appendChild(opt);
+    });
+  }
+
+  // Deep-enough shape check for a restored backup file — catches malformed
+  // JSON that would otherwise pass the old "just check .people and .weeks
+  // are truthy" test and then crash the first render that calls .find() or
+  // .filter() on something that isn't actually an array/object.
+  function isValidScheduleBackup(parsed){
+    if(!parsed || typeof parsed !== "object") return false;
+    if(!Array.isArray(parsed.people)) return false;
+    if(!parsed.people.every(p => p && typeof p.id==="string" && typeof p.name==="string")) return false;
+    if(!parsed.weeks || typeof parsed.weeks !== "object" || Array.isArray(parsed.weeks)) return false;
+    return Object.values(parsed.weeks).every(w =>
+      w && Array.isArray(w.shifts) &&
+      w.shifts.every(s => s && typeof s.id==="string" && typeof s.day==="number" &&
+                           typeof s.slot==="number" && typeof s.durMin==="number" &&
+                           typeof s.personId==="string")
+    );
+  }
+
+  function migrateLegacy(old){
+    const s = defaultState();
+    s.title = old.title || s.title;
+    s.supervisorName = old.supervisorName || s.supervisorName;
+    s.supervisorRole = old.supervisorRole || s.supervisorRole;
+    s.defaultLengthMin = old.defaultLengthMin || s.defaultLengthMin;
+    s.people = old.people || s.people;
+    const wk = snapToFriday(old.weekStart || todayStr());
+    s.currentWeekStart = wk;
+    s.weeks[wk] = { shifts: old.shifts || [] };
+    return s;
+  }
+
+  function load(){
+    let raw = localStorage.getItem(STORAGE_KEY);
+    let parsed = raw ? tryParse(raw) : null;
+    if(!parsed){
+      const backupRaw = localStorage.getItem(BACKUP_KEY);
+      parsed = backupRaw ? tryParse(backupRaw) : null;
+      if(parsed) console.warn("Primary schedule data was unreadable — recovered from backup.");
+    }
+    if(!parsed){
+      // Pre-rebrand key, same v3 shape — a one-time straight copy, not a
+      // format migration. Only matches an install that had data under the
+      // old key name; a fresh install finds nothing here and moves on.
+      const oldRaw = localStorage.getItem(OLD_STORAGE_KEY);
+      parsed = oldRaw ? tryParse(oldRaw) : null;
+    }
+    if(!parsed){
+      const legacyRaw = localStorage.getItem(LEGACY_KEY);
+      const legacy = legacyRaw ? tryParse(legacyRaw) : null;
+      if(legacy) parsed = migrateLegacy(legacy);
+    }
+    if(!parsed){
+      parsed = defaultState();
+      parsed.weeks[parsed.currentWeekStart] = { shifts: sampleShifts(parsed.people) };
+    }
+    parsed.currentWeekStart = snapToFriday(parsed.currentWeekStart);
+    if(!parsed.weeks) parsed.weeks = {};
+    if(typeof parsed.organization !== "string") parsed.organization = "";
+    return parsed;
+  }
+
+  function save(){
+    clearTimeout(localSaveTimer);
+    localSaveTimer = setTimeout(writeLocalStorage, 300);
+    // Electron build: also persist to a real file on disk (atomic write +
+    // rolling daily backups handled in the main process) so data survives a
+    // cleared browser cache and stays long-term, not just in localStorage.
+    if(window.scheduleAPI && window.scheduleAPI.save){
+      clearTimeout(diskSaveTimer);
+      diskSaveTimer = setTimeout(()=>{
+        window.scheduleAPI.save(state).catch(()=>{});
+      }, 300);
+    }
+  }
+  function writeLocalStorage(){
+    try{
+      const json = JSON.stringify(state);
+      const prev = localStorage.getItem(STORAGE_KEY);
+      if(prev) localStorage.setItem(BACKUP_KEY, prev);
+      localStorage.setItem(STORAGE_KEY, json);
+    }catch(e){ console.error("Couldn't save schedule data:", e); }
+  }
+  // Both writes above are debounced 300ms so rapid typing (title, supervisor
+  // name/role) doesn't re-serialize the entire multi-week state on every
+  // keystroke. That means the very last edit could be lost if the window
+  // closes inside that window — flush synchronously right before it does.
+  // The localStorage half is a guaranteed synchronous write; the disk half
+  // is best-effort (the IPC round-trip may not finish before the process
+  // tears down), but it's strictly better than never attempting it.
+  function flushSave(){
+    clearTimeout(localSaveTimer);
+    clearTimeout(diskSaveTimer);
+    writeLocalStorage();
+    if(window.scheduleAPI && window.scheduleAPI.save) window.scheduleAPI.save(state).catch(()=>{});
+  }
+  window.addEventListener("beforeunload", flushSave);
+  let diskSaveTimer = null;
+  let localSaveTimer = null;
+
+  let state = load();
+
+  // Single-level, capped undo for the highest-risk actions (delete, clear
+  // week, move, resize, remove person) — a snapshot of the mutable data
+  // taken right before each one commits. Cmd/Ctrl+Z pops the most recent
+  // snapshot and restores it. Deliberately simple (no redo, no multi-branch
+  // history) rather than no safety net at all.
+  let undoStack = [];
+  const UNDO_MAX = 20;
+  function pushUndo(){
+    undoStack.push(JSON.stringify({people:state.people, weeks:state.weeks}));
+    if(undoStack.length > UNDO_MAX) undoStack.shift();
+  }
+  function performUndo(){
+    if(undoStack.length===0) return;
+    const snap = JSON.parse(undoStack.pop());
+    state.people = snap.people;
+    state.weeks = snap.weeks;
+    save(); renderAll();
+  }
+  document.addEventListener("keydown", (e)=>{
+    if(document.body.classList.contains("team-mode")) return; // Team mode's own listener handles this there
+    if((e.metaKey || e.ctrlKey) && !e.shiftKey && e.key.toLowerCase()==="z"){
+      e.preventDefault();
+      performUndo();
+    }
+  });
+
+  // If running inside the Electron app, prefer the on-disk copy once it's
+  // back (it's the more durable source of truth); reconcile and re-render.
+  if(window.scheduleAPI && window.scheduleAPI.load){
+    window.scheduleAPI.load().then(diskState=>{
+      if(diskState && diskState.version===3 && diskState.weeks){
+        diskState.currentWeekStart = snapToFriday(diskState.currentWeekStart);
+        state = diskState;
+        renderAll();
+      }
+    }).catch(()=>{});
+  }
+
+  function ensureWeek(dateStr){
+    if(!state.weeks[dateStr]) state.weeks[dateStr] = { shifts: [] };
+    return state.weeks[dateStr];
+  }
+  function currentShifts(){ return ensureWeek(state.currentWeekStart).shifts; }
+  function setCurrentShifts(arr){ ensureWeek(state.currentWeekStart).shifts = arr; }
+  function dayShiftsSorted(dayIndex){
+    return currentShifts().filter(s=>s.day===dayIndex).sort((a,b)=>a.slot-b.slot);
+  }
+
+  function personById(id){ return state.people.find(p=>p.id===id); }
+
+  function clockLabel(slot){
+    const h24 = (START_HOUR + slot) % 24;
+    const h12 = ((h24 + 11) % 12) + 1;
+    const ampm = h24 < 12 ? "AM" : "PM";
+    return h12 + ":00 " + ampm;
+  }
+  function fmtLen(min){
+    const h = Math.floor(min/60), m = min%60;
+    if(m===0) return h + "h";
+    return h + "h " + m + "m";
+  }
+  function dateForDay(weekStart, idx){
+    const d = safeDate(weekStart);
+    d.setDate(d.getDate() + idx);
+    return d;
+  }
+  function fmtTabRange(weekStart){
+    const start = dateForDay(weekStart, 0);
+    const end = dateForDay(weekStart, 6);
+    const sameMonth = start.getMonth()===end.getMonth();
+    const startStr = (start.getMonth()+1)+"/"+start.getDate();
+    const endStr = sameMonth ? String(end.getDate()) : (end.getMonth()+1)+"/"+end.getDate();
+    return startStr + "–" + endStr;
+  }
+
+  let viewMode = "week";
+  let monthCursor = new Date(state.currentWeekStart + "T00:00:00");
+
+  // ---------------- Rendering ----------------
+  function renderAll(){
+    document.getElementById("week-start").value = state.currentWeekStart;
+    document.getElementById("organization").value = state.organization || "";
+    document.getElementById("org-label").textContent = state.organization || "";
+    document.getElementById("org-label").style.display = state.organization ? "block" : "none";
+    renderOrgDatalist();
+    document.getElementById("sched-title").textContent = state.title;
+    document.getElementById("sup-name").textContent = state.supervisorName;
+    document.getElementById("sup-role").textContent = state.supervisorRole;
+    const wk = dateForDay(state.currentWeekStart, 0);
+    document.getElementById("week-of-label").textContent =
+      wk.toLocaleDateString(undefined,{month:"long", day:"numeric"});
+
+    renderDefaultLenButtons();
+    renderPeopleList();
+    renderTimeCol();
+    renderDayHeaders();
+    renderDayCols();
+    renderWeekTabs();
+    if(viewMode === "month") renderMonthView();
+    applyViewMode();
+  }
+
+  function applyViewMode(){
+    document.getElementById("schedule-capture").style.display = viewMode==="week" ? "block" : "none";
+    document.getElementById("month-view").style.display = viewMode==="month" ? "block" : "none";
+    document.getElementById("view-toggle").textContent = viewMode==="week" ? "Month view" : "Week view";
+    document.getElementById("view-toggle").classList.toggle("active-toggle", viewMode==="month");
+  }
+  document.getElementById("view-toggle").onclick = ()=>{
+    viewMode = viewMode==="week" ? "month" : "week";
+    if(viewMode==="month") monthCursor = new Date(state.currentWeekStart + "T00:00:00");
+    renderMonthView();
+    applyViewMode();
+  };
+  function updateSidebarHandle(){
+    const collapsed = document.body.classList.contains("sidebar-hidden");
+    const handle = document.getElementById("sidebar-handle");
+    handle.textContent = collapsed ? "\u203a" : "\u2039";
+    const label = collapsed ? "Show roster" : "Hide roster";
+    handle.title = label; handle.setAttribute("aria-label", label);
+  }
+  document.getElementById("sidebar-handle").onclick = ()=>{
+    document.body.classList.toggle("sidebar-hidden");
+    updateSidebarHandle();
+  };
+  updateSidebarHandle();
+
+  // Keeps the whole grid (24 hourly rows) inside the visible window at all
+  // times instead of relying on a fixed row height that eventually needs
+  // scrolling — recomputes the hour-row height from whatever vertical space
+  // is actually left after the toolbar, header, day-headers, and week tabs.
+  function fitRowHeight(){
+    if(viewMode !== "week") return;
+    const toolbar = document.getElementById("toolbar");
+    const weekTabs = document.getElementById("week-tabs");
+    const wrap = document.getElementById("schedule-wrap");
+    const header = document.getElementById("sched-header");
+    const dayHeaders = document.querySelector(".day-headers");
+    if(!toolbar || !weekTabs || !wrap || !header || !dayHeaders) return;
+
+    const wrapStyle = getComputedStyle(wrap);
+    const wrapPadV = parseFloat(wrapStyle.paddingTop) + parseFloat(wrapStyle.paddingBottom);
+    const chromeHeight = toolbar.offsetHeight + weekTabs.offsetHeight + wrapPadV +
+                          header.offsetHeight + dayHeaders.offsetHeight;
+    const available = window.innerHeight - chromeHeight - 4;
+    const newRowH = Math.max(ROW_H_MIN, Math.floor(available / 24));
+    if(newRowH !== ROW_H){
+      ROW_H = newRowH;
+      document.documentElement.style.setProperty("--row-h", ROW_H+"px");
+      renderTimeCol();
+      renderDayCols();
+    }
+  }
+  let resizeRAF = null;
+  window.addEventListener("resize", ()=>{
+    if(resizeRAF) return;
+    resizeRAF = requestAnimationFrame(()=>{ resizeRAF=null; fitRowHeight(); });
+  });
+
+  function switchWeek(newFriday){
+    state.currentWeekStart = snapToFriday(newFriday);
+    save();
+    renderAll();
+  }
+
+  function closeAllCustomPanels(except){
+    document.querySelectorAll(".custom-panel").forEach(p=>{ if(p!==except) p.classList.remove("open"); });
+  }
+  // Single delegated click handler for all three "click elsewhere closes
+  // this" behaviors (custom length panels, the shift popover, the context
+  // menu) — one composedPath() walk instead of three separate listeners
+  // each redoing the same traversal on every click in the app.
+  document.addEventListener("click", (e)=>{
+    const path = e.composedPath();
+
+    const inCustomPanel = path.some(el => el.classList && el.classList.contains("custom-panel"));
+    const inCustomBtn = path.some(el => el.classList && el.classList.contains("custom-btn"));
+    if(!inCustomPanel && !inCustomBtn) closeAllCustomPanels(null);
+
+    const popoverEl = document.getElementById("popover");
+    const inShift = path.some(el => el.classList && el.classList.contains("shift"));
+    if(!inShift && !path.includes(popoverEl)) hidePopover();
+
+    const ctxMenuEl = document.getElementById("ctx-menu");
+    if(!path.includes(ctxMenuEl)) hideContextMenu();
+  });
+
+  function renderDefaultLenButtons(){
+    const wrap = document.getElementById("default-len-set");
+    wrap.innerHTML = "";
+    LEN_OPTIONS.forEach(h=>{
+      const b = document.createElement("button");
+      b.className = "len-btn" + (state.defaultLengthMin===h*60 ? " active":"");
+      b.textContent = h;
+      b.title = h + " hour shift";
+      b.onclick = ()=>{ state.defaultLengthMin=h*60; save(); renderDefaultLenButtons(); };
+      wrap.appendChild(b);
+    });
+    const custom = document.createElement("button");
+    const isCustom = !LEN_OPTIONS.includes(state.defaultLengthMin/60) || state.defaultLengthMin%60!==0;
+    custom.className = "len-btn custom-btn" + (isCustom ? " active":"");
+    custom.textContent = isCustom ? fmtLen(state.defaultLengthMin) : "Custom";
+    custom.onclick = (e)=>{
+      e.stopPropagation();
+      const panel = document.getElementById("default-custom");
+      const opening = !panel.classList.contains("open");
+      closeAllCustomPanels(panel);
+      panel.classList.toggle("open", opening);
+      if(opening){
+        document.getElementById("default-h").value = Math.floor(state.defaultLengthMin/60);
+        document.getElementById("default-m").value = state.defaultLengthMin%60;
+      }
+    };
+    wrap.appendChild(custom);
+  }
+  document.getElementById("default-custom-apply").onclick = ()=>{
+    const h = Math.max(0, Math.min(24, parseInt(document.getElementById("default-h").value,10)||0));
+    const m = Math.max(0, Math.min(59, parseInt(document.getElementById("default-m").value,10)||0));
+    state.defaultLengthMin = Math.max(15, h*60+m);
+    save(); renderDefaultLenButtons();
+    document.getElementById("default-custom").classList.remove("open");
+  };
+
+  // Keyboard-accessible alternative to drag-and-drop shift creation: Tab to
+  // a person in the sidebar and press Enter/Space to "arm" them, then Tab to
+  // a day and press Enter/Space to drop a default-length shift into the
+  // first open gap that day. Drag-and-drop remains the primary flow.
+  let armedPersonId = null;
+  function findFirstGap(dayShifts, neededMin){
+    let cursor = 0;
+    const sorted = dayShifts.slice().sort((a,b)=>a.slot-b.slot);
+    for(const s of sorted){
+      if(s.slot - cursor >= neededMin/60 - 1e-6){
+        return { slot: cursor, durMin: Math.min(neededMin, (s.slot-cursor)*60) };
+      }
+      cursor = Math.max(cursor, s.slot + s.durMin/60);
+    }
+    if(24 - cursor > 0){
+      return { slot: cursor, durMin: Math.min(neededMin, (24-cursor)*60) };
+    }
+    return null;
+  }
+
+  function renderPeopleList(){
+    const wrap = document.getElementById("people-list");
+    wrap.innerHTML = "";
+    state.people.forEach(p=>{
+      const row = document.createElement("div");
+      row.className = "person-row" + (armedPersonId===p.id ? " armed" : "");
+      row.draggable = true;
+      row.dataset.personId = p.id;
+      row.tabIndex = 0;
+      row.setAttribute("role", "button");
+      row.setAttribute("aria-pressed", armedPersonId===p.id ? "true" : "false");
+      row.setAttribute("aria-label", "Select " + p.name + " to place a shift with the keyboard");
+      row.addEventListener("dragstart", e=>{ e.dataTransfer.setData("text/plain", p.id); });
+      row.addEventListener("keydown", e=>{
+        if(e.target !== row || (e.key!=="Enter" && e.key!==" ")) return;
+        e.preventDefault();
+        armedPersonId = armedPersonId===p.id ? null : p.id;
+        renderPeopleList();
+      });
+
+      const sw = document.createElement("input");
+      sw.type = "color"; sw.value = p.color;
+      sw.oninput = ()=>{ p.color = sw.value; save(); renderDayCols(); };
+
+      const name = document.createElement("input");
+      name.type = "text"; name.value = p.name;
+      name.oninput = ()=>{ p.name = name.value; save(); renderDayCols(); refreshPopoverPeople(); };
+
+      const rm = document.createElement("button");
+      rm.className = "rm"; rm.textContent = "✕"; rm.title = "Remove person"; rm.setAttribute("aria-label", "Remove "+p.name);
+      rm.onclick = ()=>{
+        const shiftCount = Object.values(state.weeks).reduce((n,w)=> n + w.shifts.filter(s=>s.personId===p.id).length, 0);
+        const msg = shiftCount > 0
+          ? "Remove " + p.name + "? This deletes " + shiftCount + " shift" + (shiftCount===1?"":"s") + " assigned to them, across every week. (Ctrl/Cmd+Z to undo.)"
+          : "Remove " + p.name + "?";
+        if(!confirm(msg)) return;
+        pushUndo();
+        state.people = state.people.filter(x=>x.id!==p.id);
+        Object.values(state.weeks).forEach(w=>{ w.shifts = w.shifts.filter(s=>s.personId!==p.id); });
+        save(); renderAll();
+      };
+
+      row.appendChild(sw); row.appendChild(name); row.appendChild(rm);
+      wrap.appendChild(row);
+    });
+  }
+
+  function renderTimeCol(){
+    const wrap = document.getElementById("time-col");
+    wrap.innerHTML = "";
+    for(let i=0;i<24;i++){
+      const c = document.createElement("div");
+      c.className = "cell";
+      c.style.height = ROW_H+"px";
+      c.textContent = clockLabel(i);
+      wrap.appendChild(c);
+    }
+  }
+
+  function renderDayHeaders(){
+    const wrap = document.getElementById("day-headers-row");
+    wrap.innerHTML = "";
+    for(let i=0;i<NUM_DAYS;i++){
+      const d = dateForDay(state.currentWeekStart, i);
+      const h = document.createElement("div");
+      h.className = "day-header";
+      h.innerHTML = '<div class="dnum">'+(d.getMonth()+1)+'/'+d.getDate()+'</div>' +
+                    '<div class="dow">'+DOW[d.getDay()]+'</div>';
+      wrap.appendChild(h);
+    }
+  }
+
+  // real DOM hour-boundary lines so they always render in the exported screenshot
+  function addGridLines(container, totalHeightPx, extraClass){
+    const totalHours = Math.round(totalHeightPx/ROW_H);
+    for(let i=1;i<totalHours;i++){
+      const line = document.createElement("div");
+      line.className = "grid-line" + (extraClass ? " "+extraClass : "");
+      line.style.top = (i*ROW_H)+"px";
+      container.appendChild(line);
+    }
+  }
+
+  function renderDayCols(){
+    const wrap = document.getElementById("day-cols");
+    wrap.innerHTML = "";
+    for(let i=0;i<NUM_DAYS;i++){
+      const dayShifts = dayShiftsSorted(i); // computed once, reused below for both rendering and the drop handler
+      const col = document.createElement("div");
+      col.className = "day-col";
+      col.style.height = (24*ROW_H)+"px";
+      col.dataset.day = i;
+      col.tabIndex = 0;
+      col.setAttribute("role", "button");
+      col.setAttribute("aria-label", "Add a shift here for the selected person");
+      col.addEventListener("keydown", e=>{
+        if(e.target !== col || (e.key!=="Enter" && e.key!==" ")) return;
+        e.preventDefault();
+        if(!armedPersonId || !personById(armedPersonId)) return;
+        const gap = findFirstGap(dayShifts, state.defaultLengthMin);
+        if(!gap || gap.durMin < 15) return;
+        currentShifts().push({id:uid(), day:i, slot:gap.slot, durMin:gap.durMin, personId:armedPersonId});
+        save(); renderDayCols(); renderWeekTabs();
+      });
+
+      col.addEventListener("dragover", e=>{ e.preventDefault(); col.classList.add("dragover"); });
+      col.addEventListener("dragleave", ()=> col.classList.remove("dragover"));
+      col.addEventListener("drop", e=>{
+        e.preventDefault();
+        col.classList.remove("dragover");
+        const personId = e.dataTransfer.getData("text/plain");
+        if(!personId || !personById(personId)) return;
+        const rect = col.getBoundingClientRect();
+        let desiredSlot = Math.floor((e.clientY - rect.top)/ROW_H);
+        desiredSlot = Math.max(0, Math.min(23, desiredSlot));
+
+        // snap new shift to the end of whatever already occupies earlier time in this column
+        let startSlot = 0;
+        let nextStart = 24;
+        for(const s of dayShifts){
+          const end = s.slot + s.durMin/60;
+          if(end <= desiredSlot) startSlot = end;
+          else { nextStart = Math.min(nextStart, s.slot); break; }
+        }
+        const maxDur = Math.max(0, nextStart - startSlot);
+        const durMin = Math.min(state.defaultLengthMin, maxDur*60);
+        if(durMin < 15) return; // no room to place a shift here
+
+        currentShifts().push({id:uid(), day:i, slot:startSlot, durMin, personId});
+        save(); renderDayCols(); renderWeekTabs();
+      });
+
+      dayShifts.forEach(s=>{ col.appendChild(buildShiftEl(s)); });
+
+      wrap.appendChild(col);
+    }
+  }
+
+  function buildShiftEl(shift){
+    const p = personById(shift.personId);
+    const el = document.createElement("div");
+    el.className = "shift";
+    const heightPx = shift.durMin/60*ROW_H;
+    el.style.top = (shift.slot*ROW_H)+"px";
+    el.style.height = heightPx+"px";
+    el.style.backgroundColor = p ? p.color : "#ddd";
+    el.dataset.id = shift.id;
+
+    const label = document.createElement("span");
+    label.className = "label-text";
+    label.textContent = p ? p.name : "Unassigned";
+    el.appendChild(label);
+
+    if(heightPx > 40){
+      const lenLbl = document.createElement("span");
+      lenLbl.className = "len-label";
+      lenLbl.textContent = fmtLen(shift.durMin);
+      el.appendChild(lenLbl);
+    }
+
+    const del = document.createElement("button");
+    del.className = "del"; del.textContent = "✕"; del.title = "Delete shift"; del.setAttribute("aria-label", "Delete shift");
+    del.onclick = (e)=>{
+      e.stopPropagation();
+      pushUndo();
+      setCurrentShifts(currentShifts().filter(s=>s.id!==shift.id));
+      save(); renderDayCols(); renderWeekTabs(); hidePopover();
+    };
+    el.appendChild(del);
+
+    const rs = document.createElement("div");
+    rs.className = "rs";
+    el.appendChild(rs);
+
+    const rsTop = document.createElement("div");
+    rsTop.className = "rs-top";
+    el.appendChild(rsTop);
+
+    attachMove(el, shift);
+    attachResize(rs, el, shift, false);
+    attachResize(rsTop, el, shift, true);
+
+    el.addEventListener("click", (e)=>{
+      if(e.target===del) return;
+      if(activeShift){
+        // A popover is already open. The first click anywhere outside
+        // it — the shift it belongs to, a different shift, empty grid
+        // space, all the same — just closes it (2026-07-22). Opening a
+        // *different* shift's popover always takes a deliberate second
+        // click now; nothing opens in the same click that closes another.
+        hidePopover();
+        return;
+      }
+      showPopover(shift, el);
+    });
+    el.addEventListener("contextmenu", (e)=>{
+      e.preventDefault();
+      showContextMenu(shift, e.clientX, e.clientY);
+    });
+
+    return el;
+  }
+
+  // ---------------- Drag to move existing shifts ----------------
+  // The previous version called save()+renderDayCols() on every pointermove,
+  // which rebuilds the DOM the card is captured on mid-drag — that kills
+  // pointer capture after the first step, so the card moves once and then
+  // freezes. Fix: track the gesture on window (immune to DOM changes / what's
+  // under the cursor), float a disposable ghost clone that just follows the
+  // pointer with zero snapping, and only touch state/re-render once, on
+  // release — snapping the drop to the nearest day column + nearest hour line.
+  function attachMove(el, shift){
+    let dragging=false, moved=false, rafPending=false;
+    let startX=0, startY=0, grabDX=0, grabDY=0, ghostW=0, ghostH=0;
+    let lastX=0, lastY=0, suppressClick=false, ghost=null;
+
+    function applyMove(){
+      rafPending = false;
+      if(!dragging || !ghost) return;
+      ghost.style.left = (lastX - grabDX) + "px";
+      ghost.style.top = (lastY - grabDY) + "px";
+    }
+
+    function onMove(e){
+      if(!dragging) return;
+      lastX = e.clientX; lastY = e.clientY;
+      if(!moved){
+        if(Math.abs(lastX-startX) < 3 && Math.abs(lastY-startY) < 3) return;
+        moved = true;
+        suppressClick = true;
+        document.body.classList.add("no-select");
+        el.classList.add("drag-source-hidden"); // hide the real card in place, untouched
+
+        ghost = el.cloneNode(true);
+        ghost.classList.remove("drag-source-hidden");
+        ghost.classList.add("dragging-ghost");
+        ghost.style.position = "fixed";
+        ghost.style.width = ghostW+"px";
+        ghost.style.height = ghostH+"px";
+        ghost.style.pointerEvents = "none"; // throwaway clone, not the capture target — safe here
+        ghost.style.zIndex = 200;
+        document.body.appendChild(ghost);
+      }
+      if(!rafPending){ rafPending = true; requestAnimationFrame(applyMove); } // batch to one DOM write/frame
+    }
+
+    function cleanup(){
+      dragging = false;
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+      window.removeEventListener("pointercancel", onCancel);
+      document.body.classList.remove("no-select");
+      if(ghost && ghost.parentElement) ghost.parentElement.removeChild(ghost);
+      ghost = null;
+      el.classList.remove("drag-source-hidden");
+    }
+
+    function onUp(e){
+      const wasMoved = moved;
+      const finalX = e.clientX, finalY = e.clientY;
+      cleanup();
+      try{ el.releasePointerCapture(e.pointerId); }catch(err){}
+      if(!wasMoved) return;
+
+      // Snapping happens here, on drop — never during the float.
+      const cols = Array.from(document.querySelectorAll(".day-col"));
+      let col = null;
+      for(const c of cols){
+        const r = c.getBoundingClientRect();
+        if(finalX >= r.left && finalX < r.right){ col = c; break; }
+      }
+      if(!col) return; // released outside the grid — leave it where it was
+
+      const rect = col.getBoundingClientRect();
+      const durHours = shift.durMin/60;
+      let slot = Math.round((finalY - grabDY - rect.top)/ROW_H);
+      slot = Math.max(0, Math.min(24-durHours, slot));
+      pushUndo();
+      shift.day = parseInt(col.dataset.day, 10);
+      shift.slot = slot;
+      save(); renderDayCols(); renderWeekTabs();
+    }
+
+    function onCancel(e){
+      cleanup();
+      try{ el.releasePointerCapture(e.pointerId); }catch(err){}
+    }
+
+    el.addEventListener("pointerdown", (e)=>{
+      if(e.target.classList.contains("rs") || e.target.classList.contains("del")) return;
+      if(e.button !== undefined && e.button !== 0) return; // let contextmenu handle right-click
+      e.preventDefault(); // stops the browser from starting native text-selection/drag on mousedown —
+      // without this, native selection can race our pointer capture and explains both the
+      // "selects text like a webpage" symptom and the drag dying after one step.
+      dragging = true; moved = false;
+      startX = e.clientX; startY = e.clientY; lastX = startX; lastY = startY;
+      const rect = el.getBoundingClientRect();
+      grabDX = e.clientX - rect.left;
+      grabDY = e.clientY - rect.top;
+      ghostW = rect.width; ghostH = rect.height;
+      // Safe here because, unlike before, el is never reparented or given
+      // pointer-events:none mid-drag — the ghost clone handles the visuals.
+      try{ el.setPointerCapture(e.pointerId); }catch(err){}
+      window.addEventListener("pointermove", onMove);
+      window.addEventListener("pointerup", onUp);
+      window.addEventListener("pointercancel", onCancel);
+    });
+
+    // Swallow the click a drag-release would otherwise fire, so finishing a
+    // drag doesn't also pop the edit popover open.
+    el.addEventListener("click", (e)=>{
+      if(suppressClick){ suppressClick = false; e.stopImmediatePropagation(); e.preventDefault(); }
+    }, true);
+  }
+
+  function attachResize(handle, el, shift, fromTop){
+    let resizing=false, startY=0, origSlot=shift.slot, origDurMin=shift.durMin;
+    let newSlot=shift.slot, newDurMin=shift.durMin;
+    const endSlot = ()=> origSlot + origDurMin/60; // fixed reference point for a top-edge drag
+
+    function onMove(e){
+      if(!resizing) return;
+      const dy = e.clientY - startY;
+
+      if(fromTop){
+        // Top edge follows the cursor smoothly; the bottom edge (endSlot)
+        // never moves — dragging up extends the start earlier, dragging
+        // down shortens it, same "snap on release" contract as the bottom handle.
+        const maxSlot = endSlot() - 0.25; // leave room for a 15-minute minimum
+        let liveTop = Math.max(0, Math.min(maxSlot*ROW_H, origSlot*ROW_H + dy));
+        const endPx = endSlot()*ROW_H;
+        el.style.top = liveTop + "px";
+        el.style.height = Math.max(ROW_H/4, endPx - liveTop) + "px";
+
+        const deltaSlots = Math.round(dy/ROW_H);
+        newSlot = Math.max(0, Math.min(maxSlot, origSlot + deltaSlots));
+        newDurMin = Math.max(15, (endSlot() - newSlot)*60);
+      } else {
+        let liveHeight = Math.max(ROW_H/4, (origDurMin/60*ROW_H) + dy);
+        liveHeight = Math.min(liveHeight, (24-shift.slot)*ROW_H);
+        el.style.height = liveHeight + "px"; // follows the cursor smoothly...
+        const deltaSlots = Math.round(dy/ROW_H);
+        newDurMin = Math.max(15, Math.min((24-shift.slot)*60, origDurMin+deltaSlots*60)); // ...snaps on release
+      }
+    }
+    function cleanup(){
+      resizing = false;
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+      window.removeEventListener("pointercancel", onCancel);
+      document.body.classList.remove("no-select");
+    }
+    function onUp(){
+      cleanup();
+      pushUndo();
+      if(fromTop) shift.slot = newSlot;
+      shift.durMin = newDurMin;
+      save(); renderDayCols(); renderWeekTabs();
+    }
+    function onCancel(){
+      cleanup();
+      el.style.top = (origSlot*ROW_H) + "px"; // snap back visually, nothing committed
+      el.style.height = (origDurMin/60*ROW_H) + "px";
+    }
+
+    handle.addEventListener("pointerdown", (e)=>{
+      e.stopPropagation();
+      if(e.button !== undefined && e.button !== 0) return;
+      e.preventDefault(); // same native-selection guard as the move handler above
+      resizing = true; startY = e.clientY; origSlot = shift.slot; origDurMin = shift.durMin;
+      newSlot = shift.slot; newDurMin = shift.durMin;
+      document.body.classList.add("no-select");
+      window.addEventListener("pointermove", onMove);
+      window.addEventListener("pointerup", onUp);
+      window.addEventListener("pointercancel", onCancel);
+    });
+  }
+
+  // ---------------- Left-click popover ----------------
+  let activeShift = null;
+  function showPopover(shift, el){
+    activeShift = shift;
+    hideContextMenu();
+    const pop = document.getElementById("popover");
+    const rect = el.getBoundingClientRect();
+    document.getElementById("pop-custom").classList.remove("open");
+    refreshPopoverPeople();
+    document.getElementById("pop-person").value = shift.personId;
+    renderPopoverLen();
+
+    // Measure the popover's real size before positioning (content varies
+    // — person-name lengths, whether the custom-length panel is open — so a
+    // hardcoded width guess would clip content or leave dead space). Kept
+    // hidden via visibility, not display, so offsetWidth/offsetHeight are
+    // real while nothing flashes at the wrong spot first.
+    pop.style.visibility = "hidden";
+    pop.style.display = "flex";
+    const popW = pop.offsetWidth, popH = pop.offsetHeight;
+    const margin = 8;
+
+    // Horizontal: prefer to the right of the shift card (original
+    // behavior); flip to the left of it if that would run off the right
+    // edge, then clamp inside the viewport either way.
+    let left;
+    if(rect.right + margin + popW <= window.innerWidth){
+      left = rect.right + margin;
+    } else if(rect.left - margin - popW >= 0){
+      left = rect.left - margin - popW;
+    } else {
+      left = Math.max(margin, Math.min(window.innerWidth - popW - margin, rect.right + margin));
+    }
+
+    // Vertical: prefer top-aligned with the shift card (original
+    // behavior); flip to bottom-aligned (opens upward) if top-aligned would
+    // run off the bottom of the screen, then clamp either way.
+    let top;
+    if(rect.top + popH + margin <= window.innerHeight){
+      top = rect.top;
+    } else if(rect.bottom - popH - margin >= 0){
+      top = rect.bottom - popH;
+    } else {
+      top = Math.max(margin, window.innerHeight - popH - margin);
+    }
+
+    pop.style.left = left + "px";
+    pop.style.top = top + "px";
+    pop.style.visibility = "visible";
+  }
+  function hidePopover(){
+    document.getElementById("popover").style.display = "none";
+    document.getElementById("pop-custom").classList.remove("open");
+    activeShift = null;
+  }
+  function refreshPopoverPeople(){
+    const sel = document.getElementById("pop-person");
+    sel.innerHTML = "";
+    state.people.forEach(p=>{
+      const o = document.createElement("option");
+      o.value = p.id; o.textContent = p.name;
+      sel.appendChild(o);
+    });
+    if(activeShift) sel.value = activeShift.personId;
+  }
+  document.getElementById("pop-person").addEventListener("change", (e)=>{
+    if(!activeShift) return;
+    activeShift.personId = e.target.value;
+    save(); renderDayCols();
+  });
+  function renderPopoverLen(){
+    const wrap = document.getElementById("pop-len");
+    wrap.innerHTML = "";
+    LEN_OPTIONS.forEach(h=>{
+      const b = document.createElement("button");
+      b.className = "len-btn" + (activeShift && activeShift.durMin===h*60 ? " active":"");
+      b.textContent = h;
+      b.onclick = ()=>{
+        if(!activeShift) return;
+        activeShift.durMin = Math.min(h*60, (24-activeShift.slot)*60);
+        save(); renderDayCols(); renderPopoverLen();
+      };
+      wrap.appendChild(b);
+    });
+    const custom = document.createElement("button");
+    const isCustom = activeShift && (!LEN_OPTIONS.includes(activeShift.durMin/60) || activeShift.durMin%60!==0);
+    custom.className = "len-btn custom-btn" + (isCustom ? " active":"");
+    custom.textContent = isCustom ? fmtLen(activeShift.durMin) : "Custom";
+    custom.onclick = (e)=>{
+      e.stopPropagation();
+      const panel = document.getElementById("pop-custom");
+      const opening = !panel.classList.contains("open");
+      closeAllCustomPanels(panel);
+      panel.classList.toggle("open", opening);
+      if(opening && activeShift){
+        document.getElementById("pop-h").value = Math.floor(activeShift.durMin/60);
+        document.getElementById("pop-m").value = activeShift.durMin%60;
+      }
+    };
+    wrap.appendChild(custom);
+  }
+  document.getElementById("pop-custom-apply").onclick = ()=>{
+    if(!activeShift) return;
+    const h = Math.max(0, Math.min(24, parseInt(document.getElementById("pop-h").value,10)||0));
+    const m = Math.max(0, Math.min(59, parseInt(document.getElementById("pop-m").value,10)||0));
+    let durMin = Math.max(15, h*60+m);
+    durMin = Math.min(durMin, (24-activeShift.slot)*60);
+    activeShift.durMin = durMin;
+    save(); renderDayCols(); renderPopoverLen();
+    document.getElementById("pop-custom").classList.remove("open");
+  };
+  document.getElementById("pop-delete").onclick = ()=>{
+    if(!activeShift) return;
+    pushUndo();
+    setCurrentShifts(currentShifts().filter(s=>s.id!==activeShift.id));
+    save(); renderDayCols(); renderWeekTabs(); hidePopover();
+  };
+  document.getElementById("pop-close").onclick = (e)=>{
+    e.stopPropagation();
+    hidePopover();
+  };
+
+  // ---------------- Right-click context menu ----------------
+  let ctxTarget = null;
+  let ctxMode = "main"; // "main" | "guard"
+  let shiftClipboard = null; // {personId, durMin}
+
+  function showContextMenu(shift, x, y){
+    ctxTarget = shift;
+    ctxMode = "main";
+    hidePopover();
+    renderContextMenu();
+    const menu = document.getElementById("ctx-menu");
+    menu.style.display = "block";
+    const w = menu.offsetWidth || 180, h = menu.offsetHeight || 160;
+    menu.style.left = Math.min(window.innerWidth-w-8, x)+"px";
+    menu.style.top = Math.min(window.innerHeight-h-8, y)+"px";
+  }
+  function hideContextMenu(){
+    document.getElementById("ctx-menu").style.display = "none";
+    ctxTarget = null; ctxMode = "main";
+  }
+  document.addEventListener("contextmenu", (e)=>{
+    const path = e.composedPath();
+    const inShift = path.some(el => el.classList && el.classList.contains("shift"));
+    if(!inShift) hideContextMenu();
+  });
+  window.addEventListener("scroll", hideContextMenu, true);
+
+  function renderContextMenu(){
+    const menu = document.getElementById("ctx-menu");
+    menu.innerHTML = "";
+    if(!ctxTarget) return;
+
+    if(ctxMode==="guard"){
+      const back = document.createElement("div");
+      back.className = "ctx-item ctx-back";
+      back.textContent = "‹ Back";
+      back.onclick = ()=>{ ctxMode="main"; renderContextMenu(); };
+      menu.appendChild(back);
+      const sep = document.createElement("div"); sep.className="ctx-sep"; menu.appendChild(sep);
+
+      state.people.forEach(p=>{
+        const item = document.createElement("div");
+        item.className = "ctx-item ctx-person";
+        const sw = document.createElement("span");
+        sw.className = "ctx-swatch"; sw.style.background = p.color;
+        item.appendChild(sw);
+        const label = document.createElement("span");
+        label.textContent = p.name;
+        item.appendChild(label);
+        item.onclick = ()=>{
+          ctxTarget.personId = p.id; // color/name always derived from personId, so they stay in sync
+          save(); renderDayCols(); renderWeekTabs();
+          hideContextMenu();
+        };
+        menu.appendChild(item);
+      });
+      return;
+    }
+
+    const items = [
+      { label:"Copy", action: ()=>{
+          shiftClipboard = { personId: ctxTarget.personId, durMin: ctxTarget.durMin };
+          hideContextMenu();
+        }, disabled:false },
+      { label:"Cut", action: ()=>{
+          shiftClipboard = { personId: ctxTarget.personId, durMin: ctxTarget.durMin };
+          setCurrentShifts(currentShifts().filter(s=>s.id!==ctxTarget.id));
+          save(); renderDayCols(); renderWeekTabs();
+          hideContextMenu();
+        }, disabled:false },
+      { label:"Paste & Replace", action: ()=>{
+          if(!shiftClipboard) return;
+          ctxTarget.personId = shiftClipboard.personId;
+          ctxTarget.durMin = Math.min(shiftClipboard.durMin, (24-ctxTarget.slot)*60);
+          save(); renderDayCols(); renderWeekTabs();
+          hideContextMenu();
+        }, disabled: !shiftClipboard },
+      { label:"Change Guard ›", action: ()=>{ ctxMode="guard"; renderContextMenu(); }, disabled:false }
+    ];
+
+    items.forEach((it, idx)=>{
+      const item = document.createElement("div");
+      item.className = "ctx-item" + (it.disabled ? " disabled":"");
+      item.textContent = it.label;
+      if(!it.disabled) item.onclick = it.action;
+      menu.appendChild(item);
+      if(idx===2){ const sep = document.createElement("div"); sep.className="ctx-sep"; menu.appendChild(sep); }
+    });
+  }
+
+  // ---------------- Bottom week tabs ----------------
+  function renderWeekTabs(){
+    const wrap = document.getElementById("tabs-list");
+    wrap.innerHTML = "";
+    for(let i=-TAB_SPAN;i<=TAB_SPAN;i++){
+      const fri = addDays(state.currentWeekStart, i*7);
+      const tab = document.createElement("div");
+      const wk = state.weeks[fri];
+      const hasShifts = wk && wk.shifts && wk.shifts.length>0;
+      tab.className = "tab" + (i===0 ? " active":"") + (hasShifts ? " has-shifts":"");
+      tab.textContent = fmtTabRange(fri);
+      tab.title = "Open week of " + fri;
+      tab.onclick = ()=>{ if(i!==0) switchWeek(fri); };
+      wrap.appendChild(tab);
+    }
+  }
+  document.getElementById("tabs-prev").onclick = ()=> switchWeek(addDays(state.currentWeekStart, -7));
+  document.getElementById("tabs-next").onclick = ()=> switchWeek(addDays(state.currentWeekStart, 7));
+  document.getElementById("tabs-today").onclick = ()=> switchWeek(snapToFriday(todayStr()));
+
+  // ---------------- Month view ----------------
+  function renderMonthView(){
+    document.getElementById("month-label").textContent =
+      monthCursor.toLocaleDateString(undefined,{month:"long", year:"numeric"});
+    const rowsWrap = document.getElementById("month-rows");
+    rowsWrap.innerHTML = "";
+    const year = monthCursor.getFullYear(), month = monthCursor.getMonth();
+    const firstOfMonth = new Date(year, month, 1);
+    const lastOfMonth = new Date(year, month+1, 0);
+    let rowStart = snapToFriday(toDateStr(firstOfMonth));
+    const todayIso = todayStr();
+
+    while(new Date(rowStart+"T00:00:00") <= lastOfMonth){
+      const row = document.createElement("div");
+      row.className = "month-week-row" + (rowStart===state.currentWeekStart ? " active":"");
+      row.onclick = ()=>{ viewMode="week"; switchWeek(rowStart); };
+      for(let i=0;i<7;i++){
+        const d = dateForDay(rowStart, i);
+        const iso = toDateStr(d);
+        const cell = document.createElement("div");
+        cell.className = "month-day-cell" +
+          (d.getMonth()!==month ? " other-month":"") +
+          (iso===todayIso ? " today":"");
+        cell.innerHTML = '<span class="dnum">'+d.getDate()+'</span>';
+        row.appendChild(cell);
+      }
+      rowsWrap.appendChild(row);
+      rowStart = addDays(rowStart, 7);
+    }
+  }
+  document.getElementById("month-prev").onclick = ()=>{
+    monthCursor = new Date(monthCursor.getFullYear(), monthCursor.getMonth()-1, 1);
+    renderMonthView();
+  };
+  document.getElementById("month-next").onclick = ()=>{
+    monthCursor = new Date(monthCursor.getFullYear(), monthCursor.getMonth()+1, 1);
+    renderMonthView();
+  };
+
+  // ---------------- Toolbar actions ----------------
+  document.getElementById("week-start").addEventListener("change", (e)=>{ switchWeek(e.target.value); });
+  document.getElementById("organization").addEventListener("input", (e)=>{
+    state.organization = e.target.value;
+    document.getElementById("org-label").textContent = state.organization;
+    document.getElementById("org-label").style.display = state.organization ? "block" : "none";
+    save();
+  });
+  document.getElementById("organization").addEventListener("change", (e)=> rememberOrg(e.target.value));
+  document.getElementById("sched-title").addEventListener("input", (e)=>{ state.title = e.target.textContent; save(); });
+  document.getElementById("sup-name").addEventListener("input", (e)=>{ state.supervisorName = e.target.textContent; save(); });
+  document.getElementById("sup-role").addEventListener("input", (e)=>{ state.supervisorRole = e.target.textContent; save(); });
+  document.getElementById("add-person").onclick = ()=>{
+    const colors = ["#c79ac2","#a8d5a0","#a9c0ea","#cf6b63","#f5dd8e","#9fd8d8","#e3b7e0"];
+    state.people.push({id:uid(), name:"New Person", color: colors[state.people.length % colors.length]});
+    save(); renderAll();
+  };
+  document.getElementById("load-sample").onclick = ()=>{
+    if(!confirm("Replace this week's shifts with the sample schedule?")) return;
+    setCurrentShifts(sampleShifts(state.people));
+    save(); renderDayCols(); renderWeekTabs();
+  };
+  document.getElementById("clear-week").onclick = ()=>{
+    if(!confirm("Remove all shifts from this week? Other weeks are unaffected.")) return;
+    pushUndo();
+    setCurrentShifts([]); save(); renderDayCols(); renderWeekTabs();
+  };
+
+  // ---------------- Manual backup / restore ----------------
+  document.getElementById("export-data-btn").onclick = ()=>{
+    const blob = new Blob([JSON.stringify(state, null, 2)], {type:"application/json"});
+    const link = document.createElement("a");
+    link.download = "detail-schedule-backup-" + todayStr() + ".json";
+    link.href = URL.createObjectURL(blob);
+    link.click();
+    URL.revokeObjectURL(link.href);
+  };
+  document.getElementById("import-data-btn").onclick = ()=>{ document.getElementById("import-file").click(); };
+  document.getElementById("import-file").addEventListener("change", (e)=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      const parsed = tryParse(reader.result);
+      if(!isValidScheduleBackup(parsed)){
+        alert("That file doesn't look like a valid schedule backup.");
+        return;
+      }
+      if(!confirm("Restore this backup? It will replace everything currently loaded.")) return;
+      state = parsed;
+      state.currentWeekStart = snapToFriday(state.currentWeekStart || todayStr());
+      save();
+      viewMode = "week";
+      renderAll();
+    };
+    reader.readAsText(file);
+    e.target.value = "";
+  });
+
+  // ---------------- Screenshot export ----------------
+  // Injects real DOM hour-lines just for the moment of screenshot capture —
+  // html2canvas doesn't reliably resolve the CSS gradient used for normal
+  // on-screen rendering, but explicit elements always rasterize correctly.
+  function injectCaptureGridLines(){
+    document.querySelectorAll(".day-col").forEach(col=>{
+      addGridLines(col, 24*ROW_H, "");
+    });
+    document.querySelectorAll(".shift").forEach(el=>{
+      addGridLines(el, Math.round(el.offsetHeight/ROW_H)*ROW_H, "shift-line");
+    });
+  }
+  function removeCaptureGridLines(){
+    document.querySelectorAll(".grid-line").forEach(el=> el.remove());
+  }
+
+  function capture(callback){
+    document.body.classList.add("capturing");
+    hidePopover(); hideContextMenu();
+    injectCaptureGridLines();
+    html2canvas(document.getElementById("schedule-capture"), {backgroundColor:"#ffffff", scale:2})
+      .then(canvas=>{ removeCaptureGridLines(); document.body.classList.remove("capturing"); callback(canvas); })
+      .catch(err=>{ removeCaptureGridLines(); document.body.classList.remove("capturing"); alert("Couldn't generate the image: " + err.message); });
+  }
+  document.getElementById("export-btn").onclick = ()=>{
+    if(viewMode!=="week"){ alert("Switch to Week view to export a screenshot."); return; }
+    capture(canvas=>{
+      const link = document.createElement("a");
+      link.download = "schedule-" + state.currentWeekStart + ".png";
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    });
+  };
+  document.getElementById("copy-btn").onclick = ()=>{
+    if(viewMode!=="week"){ alert("Switch to Week view to copy a screenshot."); return; }
+    capture(canvas=>{
+      canvas.toBlob(blob=>{
+        if(!blob) return;
+        if(navigator.clipboard && window.ClipboardItem){
+          navigator.clipboard.write([new ClipboardItem({"image/png": blob})])
+            .then(()=> flashCopyButton())
+            .catch(()=> alert("Clipboard copy isn't available here — use Export screenshot instead."));
+        } else {
+          alert("Clipboard copy isn't supported here — use Export screenshot instead.");
+        }
+      });
+    });
+  };
+  function flashCopyButton(){
+    const b = document.getElementById("copy-btn");
+    const old = b.textContent;
+    b.textContent = "Copied!";
+    setTimeout(()=> b.textContent = old, 1200);
+  }
+
+  const legalYearEl = document.getElementById("legal-year");
+  if(legalYearEl) legalYearEl.textContent = new Date().getFullYear();
+
+  // One narrow, intentional exception to "the two mode scripts never talk to
+  // each other": Team mode needs a way to tell Single mode to close its own
+  // popover/context-menu/custom-panels when the user switches away, since
+  // there's nothing else that would ever close them. This exposes exactly
+  // one function reference on window — no shared state, no reach-in access
+  // to Single mode's variables. If you're tempted to add more of these,
+  // that's a sign the two modes want a real shared interface instead.
+  window.__closeSingleModeFloatingUI = function(){
+    hidePopover();
+    hideContextMenu();
+    closeAllCustomPanels(null);
+  };
+
+  renderAll();
+  fitRowHeight();
+})();
+</script>
+
+<!-- =========================================================
+     TEAM MODE — a fully separate script, separate data store
+     (teamScheduleAPI / detailTeamState_v1), separate DOM tree.
+     Does not read or write any single-mode variable or element.
+     ========================================================= -->
+<script>
+(function(){
+  const MAX_LANES = 10;
+  const LANE_MIN_WIDTH = 260; // px — width of the day panel's lane area with 1 person on at once
+  const LANE_WIDEN_RATE = 1.10; // panel widens ~10% per additional simultaneous shift (2026-07-21), compounding — see computePanelWidth
+  const TIME_COL_W = 78;      // px — matches #team-day-time-col's fixed width in CSS
+  const TEAM_ROW_H = 34; // fixed — the day overlay scrolls, so no viewport-fit needed
+  const START_HOUR = 7;
+  const NUM_DAYS = 7;
+  const STORAGE_KEY = "detailTeamState_v1";
+  const BACKUP_KEY = "detailTeamState_v1_backup";
+  const ORG_HISTORY_KEY = "detailOrgNames_v1"; // shared suggestion list — single mode has its own copy of these helpers, same key on purpose
+  const LEN_OPTIONS = [4,8,12,16];
+  const TAB_SPAN = 3;
+  const DOW = ["SUNDAY","MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY","SATURDAY"];
+
+  document.documentElement.style.setProperty("--team-row-h", TEAM_ROW_H+"px");
+
+  function uid(){ return Math.random().toString(36).slice(2,9); }
+  // See the identical helper + comment in the single-mode script above —
+  // toISOString() converts to UTC first, which silently shifts "today" for
+  // positive-UTC-offset users. Keep both copies in sync if this changes.
+  function toDateStr(d){
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,"0");
+    const day = String(d.getDate()).padStart(2,"0");
+    return y+"-"+m+"-"+day;
+  }
+  function todayStr(){ return toDateStr(new Date()); }
+  function safeDate(dateStr){
+    const d = new Date((dateStr || "") + "T00:00:00");
+    if(isNaN(d.getTime())) return new Date(todayStr() + "T00:00:00");
+    return d;
+  }
+  function addDays(dateStr, n){ const d=safeDate(dateStr); d.setDate(d.getDate()+n); return toDateStr(d); }
+  function snapToFriday(dateStr){
+    const d = safeDate(dateStr);
+    const diff = (d.getDay() - 5 + 7) % 7;
+    d.setDate(d.getDate() - diff);
+    return toDateStr(d);
+  }
+  function dateForDay(weekStart, idx){ const d=safeDate(weekStart); d.setDate(d.getDate()+idx); return d; }
+  function clockLabel(slot){
+    const h24 = (START_HOUR + slot) % 24;
+    const h12 = ((h24 + 11) % 12) + 1;
+    return h12 + ":00 " + (h24 < 12 ? "AM" : "PM");
+  }
+  function fmtLen(min){ const h=Math.floor(min/60), m=min%60; return m===0 ? h+"h" : h+"h "+m+"m"; }
+  // Once more than 3 people are stacked side by side in the day view, lanes
+  // get too narrow for full names — fall back to initials (first letter of
+  // each word; a single-word name just uses its first letter).
+  function abbreviateName(name){
+    const parts = (name || "").trim().split(/\s+/).filter(Boolean);
+    if(parts.length === 0) return "";
+    return parts.map(w => w.charAt(0).toUpperCase()).join("");
+  }
+  function fmtTabRange(weekStart){
+    const start = dateForDay(weekStart, 0), end = dateForDay(weekStart, 6);
+    const sameMonth = start.getMonth()===end.getMonth();
+    const startStr = (start.getMonth()+1)+"/"+start.getDate();
+    const endStr = sameMonth ? String(end.getDate()) : (end.getMonth()+1)+"/"+end.getDate();
+    return startStr + "–" + endStr;
+  }
+  function tryParse(raw){ try{ return JSON.parse(raw); }catch(e){ return null; } }
+
+  // Own copy of the organization-history helpers — see the identical
+  // functions + isolation note in the single-mode script above. Same
+  // storage key on purpose (it's suggestion history, not schedule data).
+  function loadOrgHistory(){
+    try{ const arr = JSON.parse(localStorage.getItem(ORG_HISTORY_KEY)||"[]"); return Array.isArray(arr) ? arr : []; }
+    catch(e){ return []; }
+  }
+  function rememberOrg(name){
+    name = (name||"").trim();
+    if(!name) return;
+    const list = [name, ...loadOrgHistory().filter(n=>n!==name)].slice(0,20);
+    try{ localStorage.setItem(ORG_HISTORY_KEY, JSON.stringify(list)); }catch(e){}
+    renderOrgDatalist();
+  }
+  function renderOrgDatalist(){
+    const dl = document.getElementById("team-org-history");
+    if(!dl) return;
+    dl.innerHTML = "";
+    loadOrgHistory().forEach(n=>{
+      const opt = document.createElement("option");
+      opt.value = n;
+      dl.appendChild(opt);
+    });
+  }
+
+  function defaultTeamState(){
+    return {
+      version: 1,
+      currentWeekStart: snapToFriday(todayStr()),
+      title: "TEAM SCHEDULE",
+      organization: "",
+      supervisorName: "Your Name",
+      supervisorRole: "Site Supervisor",
+      defaultLengthMin: 8*60,
+      people: [],
+      weeks: {}
+    };
+  }
+
+  function load(){
+    let parsed = tryParse(localStorage.getItem(STORAGE_KEY));
+    if(!parsed) parsed = tryParse(localStorage.getItem(BACKUP_KEY));
+    if(!parsed) parsed = defaultTeamState();
+    parsed.currentWeekStart = snapToFriday(parsed.currentWeekStart);
+    if(!parsed.weeks) parsed.weeks = {};
+    if(!parsed.people) parsed.people = [];
+    if(typeof parsed.organization !== "string") parsed.organization = "";
+    Object.values(parsed.weeks).forEach(normalizeLanesForWeek);
+    return parsed;
+  }
+  let diskSaveTimer = null;
+  let localSaveTimer = null;
+  function save(){
+    compactAllLanesInWeek(ensureWeek(state.currentWeekStart));
+    clearTimeout(localSaveTimer);
+    localSaveTimer = setTimeout(writeLocalStorage, 300);
+    if(window.teamScheduleAPI && window.teamScheduleAPI.save){
+      clearTimeout(diskSaveTimer);
+      diskSaveTimer = setTimeout(()=>{ window.teamScheduleAPI.save(state).catch(()=>{}); }, 300);
+    }
+  }
+  function writeLocalStorage(){
+    try{
+      const json = JSON.stringify(state);
+      const prev = localStorage.getItem(STORAGE_KEY);
+      if(prev) localStorage.setItem(BACKUP_KEY, prev);
+      localStorage.setItem(STORAGE_KEY, json);
+    }catch(e){ console.error("Couldn't save team schedule data:", e); }
+  }
+  // See the identical flush + comment in the single-mode script above.
+  function flushSave(){
+    clearTimeout(localSaveTimer);
+    clearTimeout(diskSaveTimer);
+    writeLocalStorage();
+    if(window.teamScheduleAPI && window.teamScheduleAPI.save) window.teamScheduleAPI.save(state).catch(()=>{});
+  }
+  window.addEventListener("beforeunload", flushSave);
+
+  let state = load();
+
+  // Same single-level capped undo pattern as single mode (see the comment
+  // there) — independent stack, since Team mode's data is fully separate.
+  let undoStack = [];
+  const UNDO_MAX = 20;
+  function pushUndo(){
+    undoStack.push(JSON.stringify({people:state.people, weeks:state.weeks}));
+    if(undoStack.length > UNDO_MAX) undoStack.shift();
+  }
+  function performUndo(){
+    if(undoStack.length===0) return;
+    const snap = JSON.parse(undoStack.pop());
+    state.people = snap.people;
+    state.weeks = snap.weeks;
+    save(); renderAll();
+  }
+  document.addEventListener("keydown", (e)=>{
+    if(!document.body.classList.contains("team-mode")) return;
+    if((e.metaKey || e.ctrlKey) && !e.shiftKey && e.key.toLowerCase()==="z"){
+      e.preventDefault();
+      performUndo();
+    }
+  });
+  if(window.teamScheduleAPI && window.teamScheduleAPI.load){
+    window.teamScheduleAPI.load().then(diskState=>{
+      if(diskState && diskState.version===1 && diskState.weeks){
+        diskState.currentWeekStart = snapToFriday(diskState.currentWeekStart);
+        if(!diskState.people) diskState.people = [];
+        Object.values(diskState.weeks).forEach(normalizeLanesForWeek);
+        state = diskState;
+        renderAll();
+      }
+    }).catch(()=>{});
+  }
+
+  function ensureWeek(dateStr){ if(!state.weeks[dateStr]) state.weeks[dateStr] = { shifts: [] }; return state.weeks[dateStr]; }
+  function currentShifts(){ return ensureWeek(state.currentWeekStart).shifts; }
+  function setCurrentShifts(arr){ ensureWeek(state.currentWeekStart).shifts = arr; }
+  function dayShiftsSorted(dayIndex){ return currentShifts().filter(s=>s.day===dayIndex).sort((a,b)=>a.slot-b.slot); }
+  function personById(id){ return state.people.find(p=>p.id===id); }
+
+  // Each team shift persists an explicit `lane` (0..MAX_LANES-1) once
+  // assigned, so lanes are sticky across ordinary vertical (time-only) moves
+  // and resizes — they never get reshuffled just because sort-by-start-time
+  // order changed. Lane only changes via an explicit horizontal drag (see
+  // attachTeamMove) or on initial creation.
+  function laneConflict(day, lane, slot, durMin, excludeId){
+    const start = slot, end = slot + durMin/60;
+    return currentShifts().some(s=>{
+      if(s.day!==day || s.lane!==lane || s.id===excludeId) return false;
+      const sStart = s.slot, sEnd = s.slot + s.durMin/60;
+      return start < sEnd - 1e-6 && sStart < end - 1e-6;
+    });
+  }
+  // Same overlap test as laneConflict, but keyed on person instead of lane
+  // — one person cannot be scheduled on two shifts that overlap in time on
+  // the same day, regardless of which lanes those shifts sit in (added
+  // 2026-07-21). Checked at every point a shift's person/day/time can
+  // change: both drop handlers, move, resize, and popover reassignment or
+  // length edits.
+  function personOverlap(day, personId, slot, durMin, excludeId){
+    const start = slot, end = slot + durMin/60;
+    return currentShifts().some(s=>{
+      if(s.day!==day || s.personId!==personId || s.id===excludeId) return false;
+      const sStart = s.slot, sEnd = s.slot + s.durMin/60;
+      return start < sEnd - 1e-6 && sStart < end - 1e-6;
+    });
+  }
+  function lowestFreeLane(day, slot, durMin, excludeId){
+    for(let l=0;l<MAX_LANES;l++){
+      if(!laneConflict(day, l, slot, durMin, excludeId)) return l;
+    }
+    return -1;
+  }
+  function visibleLaneCount(dayShifts){
+    let max = 0;
+    dayShifts.forEach(s=>{ if(typeof s.lane==="number") max = Math.max(max, s.lane); });
+    return Math.max(1, Math.min(MAX_LANES, max+1));
+  }
+  // Closes gaps in .lane numbering for one day — e.g. someone dragged into
+  // lane 5, then everyone in lanes 0–4 gets deleted, would otherwise leave 5
+  // permanently-empty columns forever since lanes are sticky-by-design and
+  // nothing else renumbers them. Remaps the remaining shifts down to a
+  // contiguous 0..n-1, preserving their relative lane order. Mutates
+  // shift.lane in place; returns true if anything actually changed (so
+  // callers can skip an unnecessary save()).
+  function compactLanesForDay(dayShifts){
+    if(dayShifts.length === 0) return false;
+    const used = Array.from(new Set(dayShifts.map(s => typeof s.lane==="number" ? s.lane : 0))).sort((a,b)=>a-b);
+    const remap = {};
+    used.forEach((oldLane, i)=>{ remap[oldLane] = i; });
+    let changed = false;
+    dayShifts.forEach(s=>{
+      const newLane = remap[typeof s.lane==="number" ? s.lane : 0];
+      if(s.lane !== newLane){ s.lane = newLane; changed = true; }
+    });
+    return changed;
+  }
+  function compactAllLanesInWeek(week){
+    let changed = false;
+    for(let day=0; day<NUM_DAYS; day++){
+      if(compactLanesForDay(week.shifts.filter(s=>s.day===day))) changed = true;
+    }
+    return changed;
+  }
+  // One-time backward-compat migration: any shift saved before lanes were
+  // persisted won't have a `.lane` yet. Assign the whole day once via the
+  // old greedy pack-by-start-time algorithm, then never touch it again.
+  function normalizeLanesForWeek(week){
+    for(let day=0; day<NUM_DAYS; day++){
+      const dayShifts = week.shifts.filter(s=>s.day===day);
+      if(dayShifts.length===0) continue;
+      if(dayShifts.every(s=>typeof s.lane==="number")) continue;
+      const sorted = dayShifts.slice().sort((a,b)=>a.slot-b.slot);
+      const laneEnd = [];
+      sorted.forEach(s=>{
+        const start = s.slot, end = s.slot + s.durMin/60;
+        let lane = laneEnd.findIndex(e => e <= start + 1e-6);
+        if(lane === -1) lane = laneEnd.length;
+        laneEnd[lane] = end;
+        s.lane = lane;
+      });
+    }
+  }
+
+  // Panel width for the expanded day view: minimum lane area for a single
+  // person, growing per additional person scheduled at once that day
+  // (capped at MAX_LANES), plus the fixed time-label column.
+  function computePanelWidth(dayShifts){
+    const lanes = visibleLaneCount(dayShifts);
+    // Compounding ~10% wider per additional simultaneous shift, not a flat
+    // px add-on — requested 2026-07-21 so growth visibly accelerates on
+    // more crowded days instead of a constant per-lane rate all the way to
+    // MAX_LANES.
+    const laneAreaWidth = LANE_MIN_WIDTH * Math.pow(LANE_WIDEN_RATE, lanes-1);
+    return TIME_COL_W + laneAreaWidth;
+  }
+
+  // Panel height: always tall enough to show all 24 hourly rows without
+  // internal scrolling (header height + the full 24-row grid) — CSS's
+  // max-height:calc(100% - 40px) is the only thing allowed to cap it, as a
+  // graceful fallback on a genuinely short window.
+  function computePanelHeight(){
+    const headerEl = document.getElementById("team-day-panel-header");
+    const headerH = headerEl ? headerEl.offsetHeight : 0;
+    return headerH + 24*TEAM_ROW_H;
+  }
+
+  let openDayIndex = null;
+
+  // ---------------- Rendering ----------------
+  function renderAll(){
+    document.getElementById("team-week-start").value = state.currentWeekStart;
+    document.getElementById("team-organization").value = state.organization || "";
+    document.getElementById("team-org-label").textContent = state.organization || "";
+    document.getElementById("team-org-label").style.display = state.organization ? "block" : "none";
+    renderOrgDatalist();
+    document.getElementById("team-sched-title").textContent = state.title;
+    document.getElementById("team-sup-name").textContent = state.supervisorName;
+    document.getElementById("team-sup-role").textContent = state.supervisorRole;
+    const wk = dateForDay(state.currentWeekStart, 0);
+    document.getElementById("team-week-of-label").textContent = wk.toLocaleDateString(undefined,{month:"long", day:"numeric"});
+
+    renderDefaultLenButtons();
+    renderPeopleList();
+    renderMiniWeek();
+    renderWeekTabs();
+    if(openDayIndex !== null) renderDayLanes();
+  }
+
+  function switchWeek(newFriday){
+    state.currentWeekStart = snapToFriday(newFriday);
+    save();
+    closeDay();
+    renderAll();
+  }
+
+  function closeAllCustomPanels(except){
+    document.querySelectorAll(".custom-panel").forEach(p=>{ if(p!==except) p.classList.remove("open"); });
+  }
+  document.addEventListener("click", (e)=>{
+    if(!document.body.classList.contains("team-mode")) return;
+    const path = e.composedPath();
+    const inCustomPanel = path.some(el => el.classList && el.classList.contains("custom-panel"));
+    const inCustomBtn = path.some(el => el.classList && el.classList.contains("custom-btn"));
+    if(!inCustomPanel && !inCustomBtn) closeAllCustomPanels(null);
+    const popoverEl = document.getElementById("team-popover");
+    const inShift = path.some(el => el.classList && el.classList.contains("team-shift"));
+    if(!inShift && !path.includes(popoverEl)) hideTeamPopover();
+  });
+
+  function renderDefaultLenButtons(){
+    const wrap = document.getElementById("team-default-len-set");
+    wrap.innerHTML = "";
+    LEN_OPTIONS.forEach(h=>{
+      const b = document.createElement("button");
+      b.className = "len-btn" + (state.defaultLengthMin===h*60 ? " active":"");
+      b.textContent = h; b.title = h + " hour shift";
+      b.onclick = ()=>{ state.defaultLengthMin=h*60; save(); renderDefaultLenButtons(); };
+      wrap.appendChild(b);
+    });
+    const custom = document.createElement("button");
+    const isCustom = !LEN_OPTIONS.includes(state.defaultLengthMin/60) || state.defaultLengthMin%60!==0;
+    custom.className = "len-btn custom-btn" + (isCustom ? " active":"");
+    custom.textContent = isCustom ? fmtLen(state.defaultLengthMin) : "Custom";
+    custom.onclick = (e)=>{
+      e.stopPropagation();
+      const panel = document.getElementById("team-default-custom");
+      const opening = !panel.classList.contains("open");
+      closeAllCustomPanels(panel);
+      panel.classList.toggle("open", opening);
+      if(opening){
+        document.getElementById("team-default-h").value = Math.floor(state.defaultLengthMin/60);
+        document.getElementById("team-default-m").value = state.defaultLengthMin%60;
+      }
+    };
+    wrap.appendChild(custom);
+  }
+  document.getElementById("team-default-custom-apply").onclick = ()=>{
+    const h = Math.max(0, Math.min(24, parseInt(document.getElementById("team-default-h").value,10)||0));
+    const m = Math.max(0, Math.min(59, parseInt(document.getElementById("team-default-m").value,10)||0));
+    state.defaultLengthMin = Math.max(15, h*60+m);
+    save(); renderDefaultLenButtons();
+    document.getElementById("team-default-custom").classList.remove("open");
+  };
+
+  let armedPersonId = null;
+
+  function renderPeopleList(){
+    const wrap = document.getElementById("team-people-list");
+    wrap.innerHTML = "";
+    state.people.forEach(p=>{
+      const row = document.createElement("div");
+      row.className = "person-row" + (armedPersonId===p.id ? " armed" : "");
+      row.draggable = true;
+      row.dataset.personId = p.id;
+      row.tabIndex = 0;
+      row.setAttribute("role", "button");
+      row.setAttribute("aria-pressed", armedPersonId===p.id ? "true" : "false");
+      row.setAttribute("aria-label", "Select " + p.name + " to place a shift with the keyboard");
+      row.addEventListener("dragstart", e=>{ e.dataTransfer.setData("text/plain", p.id); });
+      row.addEventListener("keydown", e=>{
+        if(e.target !== row || (e.key!=="Enter" && e.key!==" ")) return;
+        e.preventDefault();
+        armedPersonId = armedPersonId===p.id ? null : p.id;
+        renderPeopleList();
+      });
+
+      const sw = document.createElement("input");
+      sw.type = "color"; sw.value = p.color;
+      sw.oninput = ()=>{ p.color = sw.value; save(); renderMiniWeek(); if(openDayIndex!==null) renderDayLanes(); };
+
+      const name = document.createElement("input");
+      name.type = "text"; name.value = p.name;
+      name.oninput = ()=>{ p.name = name.value; save(); if(openDayIndex!==null) renderDayLanes(); refreshTeamPopoverPeople(); };
+
+      const rm = document.createElement("button");
+      rm.className = "rm"; rm.textContent = "✕"; rm.title = "Remove person"; rm.setAttribute("aria-label", "Remove "+p.name);
+      rm.onclick = ()=>{
+        const shiftCount = Object.values(state.weeks).reduce((n,w)=> n + w.shifts.filter(s=>s.personId===p.id).length, 0);
+        const msg = shiftCount > 0
+          ? "Remove " + p.name + "? This deletes " + shiftCount + " shift" + (shiftCount===1?"":"s") + " assigned to them, across every week. (Ctrl/Cmd+Z to undo.)"
+          : "Remove " + p.name + "?";
+        if(!confirm(msg)) return;
+        pushUndo();
+        state.people = state.people.filter(x=>x.id!==p.id);
+        Object.values(state.weeks).forEach(w=>{
+          w.shifts = w.shifts.filter(s=>s.personId!==p.id);
+          compactAllLanesInWeek(w); // this person's shifts might have been holding lanes open in weeks other than the current one
+        });
+        save(); renderAll();
+      };
+
+      row.appendChild(sw); row.appendChild(name); row.appendChild(rm);
+      wrap.appendChild(row);
+    });
+  }
+  document.getElementById("team-add-person").onclick = ()=>{
+    const colors = ["#c79ac2","#a8d5a0","#a9c0ea","#cf6b63","#f5dd8e","#9fd8d8","#e3b7e0"];
+    state.people.push({id:uid(), name:"New Person", color: colors[state.people.length % colors.length]});
+    save(); renderAll();
+  };
+  document.getElementById("team-clear-week").onclick = ()=>{
+    if(!confirm("Remove all shifts from this Team week? Other weeks are unaffected.")) return;
+    pushUndo();
+    setCurrentShifts([]); save(); renderMiniWeek(); renderWeekTabs(); if(openDayIndex!==null) renderDayLanes();
+  };
+
+  function updateTeamSidebarHandle(){
+    const collapsed = document.body.classList.contains("team-sidebar-hidden");
+    const handle = document.getElementById("team-sidebar-handle");
+    handle.textContent = collapsed ? "\u203a" : "\u2039";
+    const label = collapsed ? "Show roster" : "Hide roster";
+    handle.title = label; handle.setAttribute("aria-label", label);
+  }
+  document.getElementById("team-sidebar-handle").onclick = ()=>{
+    document.body.classList.toggle("team-sidebar-hidden");
+    updateTeamSidebarHandle();
+  };
+  updateTeamSidebarHandle();
+
+  // ---------------- Week view: compact per-day slivers ----------------
+  function renderMiniWeek(){
+    const headerWrap = document.getElementById("team-day-headers-row");
+    const colWrap = document.getElementById("team-day-cols");
+    headerWrap.innerHTML = ""; colWrap.innerHTML = "";
+    for(let i=0;i<NUM_DAYS;i++){
+      const d = dateForDay(state.currentWeekStart, i);
+      const dayShifts = dayShiftsSorted(i);
+
+      const h = document.createElement("div");
+      h.className = "team-day-header";
+      h.tabIndex = 0;
+      h.setAttribute("role", "button");
+      h.setAttribute("aria-label", "Open " + DOW[d.getDay()] + " to add or edit shifts");
+      h.innerHTML = '<div class="dnum">'+(d.getMonth()+1)+'/'+d.getDate()+'</div>'+
+                    '<div class="dow">'+DOW[d.getDay()]+'</div>'+
+                    '<div class="expand-hint">'+dayShifts.length+' shift'+(dayShifts.length===1?'':'s')+' \u2192</div>';
+      h.onclick = ()=> openDay(i);
+      h.addEventListener("keydown", e=>{
+        if(e.target !== h || (e.key!=="Enter" && e.key!==" ")) return;
+        e.preventDefault();
+        openDay(i);
+      });
+      headerWrap.appendChild(h);
+
+      const col = document.createElement("div");
+      col.className = "team-day-col-mini";
+      col.onclick = ()=> openDay(i);
+      // Drag-and-drop straight from the roster onto the week view (added
+      // 2026-07-18) — same lowestFreeLane auto-pick as the day-focus drop,
+      // just computed against the mini column's fixed height instead of
+      // TEAM_ROW_H, since the mini column isn't full-scale. Only refresh
+      // the day-focus panel if that same day happens to be open already.
+      col.addEventListener("dragover", e=>{ e.preventDefault(); col.classList.add("dragover"); });
+      col.addEventListener("dragleave", ()=> col.classList.remove("dragover"));
+      col.addEventListener("drop", e=>{
+        e.preventDefault();
+        e.stopPropagation();
+        col.classList.remove("dragover");
+        const personId = e.dataTransfer.getData("text/plain");
+        if(!personId || !personById(personId)) return;
+        const rect = col.getBoundingClientRect();
+        let desiredSlot = Math.floor((e.clientY - rect.top) / (rect.height / 24));
+        desiredSlot = Math.max(0, Math.min(23, desiredSlot));
+        const durMin = Math.min(state.defaultLengthMin, (24-desiredSlot)*60);
+        if(durMin < 15) return;
+        if(personOverlap(i, personId, desiredSlot, durMin, null)){
+          alert("That person is already scheduled at that time.");
+          return;
+        }
+        const freeLane = lowestFreeLane(i, desiredSlot, durMin, null);
+        if(freeLane === -1){
+          alert("Max " + MAX_LANES + " people already scheduled around that time.");
+          return;
+        }
+        pushUndo();
+        currentShifts().push({id:uid(), day:i, slot:desiredSlot, durMin, personId, lane:freeLane});
+        save(); renderMiniWeek(); renderWeekTabs();
+        if(openDayIndex === i) renderDayLanes();
+      });
+      const lanesForWidth = visibleLaneCount(dayShifts);
+      dayShifts.forEach(shift=>{
+        const p = personById(shift.personId);
+        const lane = shift.lane || 0;
+        const sliver = document.createElement("div");
+        sliver.className = "team-mini-shift";
+        sliver.style.top = (shift.slot/24*100)+"%";
+        sliver.style.height = (shift.durMin/60/24*100)+"%";
+        sliver.style.left = (lane*(100/lanesForWidth))+"%";
+        sliver.style.width = (100/lanesForWidth)+"%";
+        sliver.style.background = p ? p.color : "#ddd";
+        // Same >3-concurrent abbreviation rule as the expanded day view
+        // (see abbreviateName) — keeps week view and day view consistent.
+        const fullName = p ? p.name : "Unassigned";
+        const label = document.createElement("span");
+        label.className = "mini-label";
+        label.textContent = lanesForWidth > 3 ? abbreviateName(fullName) : fullName;
+        sliver.appendChild(label);
+        col.appendChild(sliver);
+      });
+      colWrap.appendChild(col);
+    }
+  }
+
+  // ---------------- Expanded single-day overlay ----------------
+  function openDay(i){
+    openDayIndex = i;
+    const d = dateForDay(state.currentWeekStart, i);
+    document.getElementById("team-day-title").textContent =
+      DOW[d.getDay()].charAt(0) + DOW[d.getDay()].slice(1).toLowerCase() + " — " + (d.getMonth()+1) + "/" + d.getDate();
+    document.getElementById("team-day-overlay").classList.add("open");
+    renderDayLanes();
+  }
+  function closeDay(){
+    openDayIndex = null;
+    document.getElementById("team-day-overlay").classList.remove("open");
+    hideTeamPopover();
+  }
+  document.getElementById("team-day-close").onclick = closeDay;
+  document.getElementById("team-day-backdrop").onclick = closeDay;
+  // Clears only the currently-open day, not the whole week (added
+  // 2026-07-21) — mirrors team-clear-week's confirm-then-pushUndo pattern,
+  // just filtered to openDayIndex instead of every day in state.weeks.
+  document.getElementById("team-day-clear").onclick = ()=>{
+    if(openDayIndex===null) return;
+    if(!confirm("Remove all shifts from this day? Other days this week are unaffected.")) return;
+    pushUndo();
+    setCurrentShifts(currentShifts().filter(s=>s.day!==openDayIndex));
+    compactAllLanesInWeek(ensureWeek(state.currentWeekStart));
+    save(); renderDayLanes(); renderMiniWeek(); renderWeekTabs(); hideTeamPopover();
+  };
+  document.addEventListener("keydown", (e)=>{
+    if(e.key==="Escape" && openDayIndex!==null) closeDay();
+  });
+
+  function renderDayLanes(){
+    const timeCol = document.getElementById("team-day-time-col");
+    timeCol.innerHTML = "";
+    for(let i=0;i<24;i++){
+      const c = document.createElement("div");
+      c.className = "cell"; c.style.height = TEAM_ROW_H+"px";
+      c.textContent = clockLabel(i);
+      timeCol.appendChild(c);
+    }
+
+    const lanesWrap = document.getElementById("team-day-lanes");
+    lanesWrap.innerHTML = "";
+    const day = openDayIndex;
+    const dayShifts = dayShiftsSorted(day);
+    const laneCount = visibleLaneCount(dayShifts);
+
+    // Keyboard-accessible alternative to dragging from the sidebar: with a
+    // person armed (see renderPeopleList), Enter/Space here drops a
+    // default-length shift into the first hour slot with room for them.
+    // Assigned with .onkeydown (not addEventListener) because lanesWrap is a
+    // persistent element that only gets its innerHTML cleared each render —
+    // addEventListener here would stack a new listener on every re-render.
+    lanesWrap.tabIndex = 0;
+    lanesWrap.setAttribute("role", "button");
+    lanesWrap.setAttribute("aria-label", "Add a shift here for the selected person");
+    lanesWrap.onkeydown = e=>{
+      if(e.target !== lanesWrap || (e.key!=="Enter" && e.key!==" ")) return;
+      e.preventDefault();
+      if(!armedPersonId || !personById(armedPersonId)) return;
+      for(let slot=0; slot<24; slot++){
+        const durMin = Math.min(state.defaultLengthMin, (24-slot)*60);
+        if(durMin < 15) break;
+        const freeLane = lowestFreeLane(day, slot, durMin, null);
+        if(freeLane !== -1){
+          currentShifts().push({id:uid(), day, slot, durMin, personId:armedPersonId, lane:freeLane});
+          save(); renderDayLanes(); renderMiniWeek(); renderWeekTabs();
+          return;
+        }
+      }
+    };
+
+    document.getElementById("team-day-panel").style.width = computePanelWidth(dayShifts) + "px";
+    document.getElementById("team-day-panel").style.height = computePanelHeight() + "px";
+
+    const lanes = [];
+    for(let l=0;l<laneCount;l++){
+      const lane = document.createElement("div");
+      lane.className = "team-lane";
+      lane.style.height = (24*TEAM_ROW_H)+"px";
+      lane.addEventListener("dragover", e=>{ e.preventDefault(); lane.classList.add("dragover"); });
+      lane.addEventListener("dragleave", ()=> lane.classList.remove("dragover"));
+      lane.addEventListener("drop", e=>{
+        e.preventDefault();
+        lane.classList.remove("dragover");
+        const personId = e.dataTransfer.getData("text/plain");
+        if(!personId || !personById(personId)) return;
+        const rect = lane.getBoundingClientRect();
+        let desiredSlot = Math.floor((e.clientY - rect.top)/TEAM_ROW_H);
+        desiredSlot = Math.max(0, Math.min(23, desiredSlot));
+        const durMin = Math.min(state.defaultLengthMin, (24-desiredSlot)*60);
+        if(durMin < 15) return;
+        // Auto-picks the lowest free column at that time, regardless of which
+        // lane element received the drop — same "just works" feel as before,
+        // it just also assigns a lane that then stays put.
+        if(personOverlap(day, personId, desiredSlot, durMin, null)){
+          alert("That person is already scheduled at that time.");
+          return;
+        }
+        const freeLane = lowestFreeLane(day, desiredSlot, durMin, null);
+        if(freeLane === -1){
+          alert("Max " + MAX_LANES + " people already scheduled around that time.");
+          return;
+        }
+        pushUndo();
+        currentShifts().push({id:uid(), day, slot:desiredSlot, durMin, personId, lane:freeLane});
+        save(); renderDayLanes(); renderMiniWeek(); renderWeekTabs();
+      });
+      lanes.push(lane);
+      lanesWrap.appendChild(lane);
+    }
+
+    dayShifts.forEach(shift=>{
+      const laneEl = lanes[Math.min(shift.lane||0, lanes.length-1)];
+      laneEl.appendChild(buildTeamShiftEl(shift, laneCount));
+    });
+  }
+
+  function buildTeamShiftEl(shift, laneCount){
+    const p = personById(shift.personId);
+    const el = document.createElement("div");
+    el.className = "team-shift";
+    const heightPx = shift.durMin/60*TEAM_ROW_H;
+    el.style.top = (shift.slot*TEAM_ROW_H)+"px";
+    el.style.height = heightPx+"px";
+    el.style.backgroundColor = p ? p.color : "#ddd";
+    el.dataset.id = shift.id;
+
+    const label = document.createElement("span");
+    label.className = "label-text";
+    const fullName = p ? p.name : "Unassigned";
+    label.textContent = laneCount > 3 ? abbreviateName(fullName) : fullName;
+    if(laneCount > 3) label.title = fullName;
+    el.appendChild(label);
+
+    if(heightPx > 34){
+      const lenLbl = document.createElement("span");
+      lenLbl.className = "len-label";
+      lenLbl.textContent = fmtLen(shift.durMin);
+      el.appendChild(lenLbl);
+    }
+
+    const del = document.createElement("button");
+    del.className = "del"; del.textContent = "✕"; del.title = "Delete shift"; del.setAttribute("aria-label", "Delete shift");
+    del.onclick = (e)=>{
+      e.stopPropagation();
+      pushUndo();
+      setCurrentShifts(currentShifts().filter(s=>s.id!==shift.id));
+      compactAllLanesInWeek(ensureWeek(state.currentWeekStart));
+      save(); renderDayLanes(); renderMiniWeek(); renderWeekTabs(); hideTeamPopover();
+    };
+    el.appendChild(del);
+
+    const rs = document.createElement("div"); rs.className = "rs"; el.appendChild(rs);
+    const rsTop = document.createElement("div"); rsTop.className = "rs-top"; el.appendChild(rsTop);
+
+    attachTeamMove(el, shift);
+    attachTeamResize(rs, el, shift, false);
+    attachTeamResize(rsTop, el, shift, true);
+
+    el.addEventListener("click", (e)=>{
+      if(e.target===del) return;
+      if(activeTeamShift===shift){ hideTeamPopover(); return; }
+      showTeamPopover(shift, el);
+    });
+
+    return el;
+  }
+
+  // ---------------- Drag to move (same ghost-clone / commit-on-release pattern as single mode) ----------------
+  function attachTeamMove(el, shift){
+    let dragging=false, moved=false, rafPending=false;
+    let startX=0, startY=0, grabDX=0, grabDY=0, ghostW=0, ghostH=0;
+    let lastX=0, lastY=0, suppressClick=false, ghost=null;
+
+    function applyMove(){
+      rafPending = false;
+      if(!dragging || !ghost) return;
+      ghost.style.left = (lastX - grabDX) + "px";
+      ghost.style.top = (lastY - grabDY) + "px";
+    }
+    function onMove(e){
+      if(!dragging) return;
+      lastX = e.clientX; lastY = e.clientY;
+      if(!moved){
+        if(Math.abs(lastX-startX) < 3 && Math.abs(lastY-startY) < 3) return;
+        moved = true; suppressClick = true;
+        document.body.classList.add("no-select");
+        el.classList.add("drag-source-hidden");
+        ghost = el.cloneNode(true);
+        ghost.classList.remove("drag-source-hidden");
+        ghost.classList.add("dragging-ghost");
+        ghost.style.position = "fixed";
+        ghost.style.width = ghostW+"px"; ghost.style.height = ghostH+"px";
+        ghost.style.pointerEvents = "none"; ghost.style.zIndex = 220;
+        document.body.appendChild(ghost);
+      }
+      if(!rafPending){ rafPending = true; requestAnimationFrame(applyMove); }
+    }
+    function cleanup(){
+      dragging = false;
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+      window.removeEventListener("pointercancel", onCancel);
+      document.body.classList.remove("no-select");
+      if(ghost && ghost.parentElement) ghost.parentElement.removeChild(ghost);
+      ghost = null;
+      el.classList.remove("drag-source-hidden");
+    }
+    function onUp(e){
+      const wasMoved = moved;
+      const finalX = e.clientX, finalY = e.clientY;
+      cleanup();
+      try{ el.releasePointerCapture(e.pointerId); }catch(err){}
+      if(!wasMoved) return;
+
+      // Lane only changes if the release point is over a *different* lane
+      // column than the shift started in. A purely vertical drag keeps the
+      // cursor within the same lane's horizontal bounds the whole time, so
+      // this naturally leaves the lane untouched unless the user actually
+      // dragged left/right.
+      const laneEls = Array.from(document.querySelectorAll("#team-day-lanes .team-lane"));
+      let targetLane = shift.lane;
+      for(let i=0;i<laneEls.length;i++){
+        const r = laneEls[i].getBoundingClientRect();
+        if(finalX >= r.left && finalX < r.right){ targetLane = i; break; }
+      }
+
+      const lanesWrap = document.getElementById("team-day-lanes");
+      const rect = lanesWrap.getBoundingClientRect();
+      const durHours = shift.durMin/60;
+      let slot = Math.round((finalY - grabDY - rect.top)/TEAM_ROW_H);
+      slot = Math.max(0, Math.min(24-durHours, slot));
+
+      if(laneConflict(shift.day, targetLane, slot, shift.durMin, shift.id) ||
+         personOverlap(shift.day, shift.personId, slot, shift.durMin, shift.id)){
+        renderDayLanes(); // occupied there, or this person is already booked then — snap back
+        return;
+      }
+      pushUndo();
+      shift.slot = slot;
+      shift.lane = targetLane;
+      save(); renderDayLanes(); renderMiniWeek(); renderWeekTabs();
+    }
+    function onCancel(e){ cleanup(); try{ el.releasePointerCapture(e.pointerId); }catch(err){} }
+
+    el.addEventListener("pointerdown", (e)=>{
+      if(e.target.classList.contains("rs") || e.target.classList.contains("rs-top") || e.target.classList.contains("del")) return;
+      if(e.button !== undefined && e.button !== 0) return;
+      e.preventDefault();
+      dragging = true; moved = false;
+      startX = e.clientX; startY = e.clientY; lastX = startX; lastY = startY;
+      const rect = el.getBoundingClientRect();
+      grabDX = e.clientX - rect.left; grabDY = e.clientY - rect.top;
+      ghostW = rect.width; ghostH = rect.height;
+      try{ el.setPointerCapture(e.pointerId); }catch(err){}
+      window.addEventListener("pointermove", onMove);
+      window.addEventListener("pointerup", onUp);
+      window.addEventListener("pointercancel", onCancel);
+    });
+    el.addEventListener("click", (e)=>{
+      if(suppressClick){ suppressClick = false; e.stopImmediatePropagation(); e.preventDefault(); }
+    }, true);
+  }
+
+  function attachTeamResize(handle, el, shift, fromTop){
+    let resizing=false, startY=0, origSlot=shift.slot, origDurMin=shift.durMin;
+    let newSlot=shift.slot, newDurMin=shift.durMin;
+    const endSlot = ()=> origSlot + origDurMin/60;
+
+    function onMove(e){
+      if(!resizing) return;
+      const dy = e.clientY - startY;
+      if(fromTop){
+        const maxSlot = endSlot() - 0.25;
+        let liveTop = Math.max(0, Math.min(maxSlot*TEAM_ROW_H, origSlot*TEAM_ROW_H + dy));
+        const endPx = endSlot()*TEAM_ROW_H;
+        el.style.top = liveTop + "px";
+        el.style.height = Math.max(TEAM_ROW_H/4, endPx - liveTop) + "px";
+        const deltaSlots = Math.round(dy/TEAM_ROW_H);
+        newSlot = Math.max(0, Math.min(maxSlot, origSlot + deltaSlots));
+        newDurMin = Math.max(15, (endSlot() - newSlot)*60);
+      } else {
+        let liveHeight = Math.max(TEAM_ROW_H/4, (origDurMin/60*TEAM_ROW_H) + dy);
+        liveHeight = Math.min(liveHeight, (24-shift.slot)*TEAM_ROW_H);
+        el.style.height = liveHeight + "px";
+        const deltaSlots = Math.round(dy/TEAM_ROW_H);
+        newDurMin = Math.max(15, Math.min((24-shift.slot)*60, origDurMin+deltaSlots*60));
+      }
+    }
+    function cleanup(){
+      resizing = false;
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+      window.removeEventListener("pointercancel", onCancel);
+      document.body.classList.remove("no-select");
+    }
+    function onUp(){
+      cleanup();
+      const testSlot = fromTop ? newSlot : shift.slot;
+      if(laneConflict(shift.day, shift.lane, testSlot, newDurMin, shift.id) ||
+         personOverlap(shift.day, shift.personId, testSlot, newDurMin, shift.id)){
+        renderDayLanes(); // revert — would overlap another shift in the same column, or double-book this person
+        return;
+      }
+      pushUndo();
+      if(fromTop) shift.slot = newSlot;
+      shift.durMin = newDurMin;
+      save(); renderDayLanes(); renderMiniWeek(); renderWeekTabs();
+    }
+    function onCancel(){
+      cleanup();
+      el.style.top = (origSlot*TEAM_ROW_H) + "px";
+      el.style.height = (origDurMin/60*TEAM_ROW_H) + "px";
+    }
+    handle.addEventListener("pointerdown", (e)=>{
+      e.stopPropagation();
+      if(e.button !== undefined && e.button !== 0) return;
+      e.preventDefault();
+      resizing = true; startY = e.clientY; origSlot = shift.slot; origDurMin = shift.durMin;
+      newSlot = shift.slot; newDurMin = shift.durMin;
+      document.body.classList.add("no-select");
+      window.addEventListener("pointermove", onMove);
+      window.addEventListener("pointerup", onUp);
+      window.addEventListener("pointercancel", onCancel);
+    });
+  }
+
+  // ---------------- Popover: reassign person / length ----------------
+  let activeTeamShift = null;
+  function showTeamPopover(shift, el){
+    activeTeamShift = shift;
+    const pop = document.getElementById("team-popover");
+    const rect = el.getBoundingClientRect();
+    document.getElementById("team-pop-custom").classList.remove("open");
+    refreshTeamPopoverPeople();
+    document.getElementById("team-pop-person").value = shift.personId;
+    renderTeamPopoverLen();
+
+    // Same smart-positioning logic as single mode's showPopover (see that
+    // function for the full explanation) — kept identical on purpose so
+    // the two modes behave the same way at the screen edges. If this ever
+    // needs to change, change both.
+    pop.style.visibility = "hidden";
+    pop.style.display = "flex";
+    const popW = pop.offsetWidth, popH = pop.offsetHeight;
+    const margin = 8;
+
+    let left;
+    if(rect.right + margin + popW <= window.innerWidth){
+      left = rect.right + margin;
+    } else if(rect.left - margin - popW >= 0){
+      left = rect.left - margin - popW;
+    } else {
+      left = Math.max(margin, Math.min(window.innerWidth - popW - margin, rect.right + margin));
+    }
+
+    let top;
+    if(rect.top + popH + margin <= window.innerHeight){
+      top = rect.top;
+    } else if(rect.bottom - popH - margin >= 0){
+      top = rect.bottom - popH;
+    } else {
+      top = Math.max(margin, window.innerHeight - popH - margin);
+    }
+
+    pop.style.left = left + "px";
+    pop.style.top = top + "px";
+    pop.style.visibility = "visible";
+  }
+  function hideTeamPopover(){
+    document.getElementById("team-popover").style.display = "none";
+    document.getElementById("team-pop-custom").classList.remove("open");
+    activeTeamShift = null;
+  }
+  function refreshTeamPopoverPeople(){
+    const sel = document.getElementById("team-pop-person");
+    sel.innerHTML = "";
+    state.people.forEach(p=>{
+      const o = document.createElement("option");
+      o.value = p.id; o.textContent = p.name;
+      sel.appendChild(o);
+    });
+    if(activeTeamShift) sel.value = activeTeamShift.personId;
+  }
+  document.getElementById("team-pop-person").addEventListener("change", (e)=>{
+    if(!activeTeamShift) return;
+    const newPersonId = e.target.value;
+    if(personOverlap(activeTeamShift.day, newPersonId, activeTeamShift.slot, activeTeamShift.durMin, activeTeamShift.id)){
+      alert("That person is already scheduled at this time.");
+      e.target.value = activeTeamShift.personId; // revert the select to what it actually still is
+      return;
+    }
+    activeTeamShift.personId = newPersonId;
+    save(); renderDayLanes(); renderMiniWeek();
+  });
+  function renderTeamPopoverLen(){
+    const wrap = document.getElementById("team-pop-len");
+    wrap.innerHTML = "";
+    LEN_OPTIONS.forEach(h=>{
+      const b = document.createElement("button");
+      b.className = "len-btn" + (activeTeamShift && activeTeamShift.durMin===h*60 ? " active":"");
+      b.textContent = h;
+      b.onclick = ()=>{
+        if(!activeTeamShift) return;
+        const durMin = Math.min(h*60, (24-activeTeamShift.slot)*60);
+        if(laneConflict(activeTeamShift.day, activeTeamShift.lane, activeTeamShift.slot, durMin, activeTeamShift.id)){
+          alert("That length would overlap someone else in the same column."); return;
+        }
+        if(personOverlap(activeTeamShift.day, activeTeamShift.personId, activeTeamShift.slot, durMin, activeTeamShift.id)){
+          alert("That length would overlap another shift already assigned to this person."); return;
+        }
+        activeTeamShift.durMin = durMin;
+        save(); renderDayLanes(); renderMiniWeek(); renderTeamPopoverLen();
+      };
+      wrap.appendChild(b);
+    });
+    const custom = document.createElement("button");
+    const isCustom = activeTeamShift && (!LEN_OPTIONS.includes(activeTeamShift.durMin/60) || activeTeamShift.durMin%60!==0);
+    custom.className = "len-btn custom-btn" + (isCustom ? " active":"");
+    custom.textContent = isCustom ? fmtLen(activeTeamShift.durMin) : "Custom";
+    custom.onclick = (e)=>{
+      e.stopPropagation();
+      const panel = document.getElementById("team-pop-custom");
+      const opening = !panel.classList.contains("open");
+      closeAllCustomPanels(panel);
+      panel.classList.toggle("open", opening);
+      if(opening && activeTeamShift){
+        document.getElementById("team-pop-h").value = Math.floor(activeTeamShift.durMin/60);
+        document.getElementById("team-pop-m").value = activeTeamShift.durMin%60;
+      }
+    };
+    wrap.appendChild(custom);
+  }
+  document.getElementById("team-pop-custom-apply").onclick = ()=>{
+    if(!activeTeamShift) return;
+    const h = Math.max(0, Math.min(24, parseInt(document.getElementById("team-pop-h").value,10)||0));
+    const m = Math.max(0, Math.min(59, parseInt(document.getElementById("team-pop-m").value,10)||0));
+    let durMin = Math.max(15, h*60+m);
+    durMin = Math.min(durMin, (24-activeTeamShift.slot)*60);
+    if(laneConflict(activeTeamShift.day, activeTeamShift.lane, activeTeamShift.slot, durMin, activeTeamShift.id)){
+      alert("That length would overlap someone else in the same column."); return;
+    }
+    if(personOverlap(activeTeamShift.day, activeTeamShift.personId, activeTeamShift.slot, durMin, activeTeamShift.id)){
+      alert("That length would overlap another shift already assigned to this person."); return;
+    }
+    activeTeamShift.durMin = durMin;
+    save(); renderDayLanes(); renderMiniWeek(); renderTeamPopoverLen();
+    document.getElementById("team-pop-custom").classList.remove("open");
+  };
+  document.getElementById("team-pop-delete").onclick = ()=>{
+    if(!activeTeamShift) return;
+    pushUndo();
+    setCurrentShifts(currentShifts().filter(s=>s.id!==activeTeamShift.id));
+    compactAllLanesInWeek(ensureWeek(state.currentWeekStart));
+    save(); renderDayLanes(); renderMiniWeek(); renderWeekTabs(); hideTeamPopover();
+  };
+  document.getElementById("team-pop-close").onclick = (e)=>{ e.stopPropagation(); hideTeamPopover(); };
+
+  // ---------------- Bottom week tabs ----------------
+  function renderWeekTabs(){
+    const wrap = document.getElementById("team-tabs-list");
+    wrap.innerHTML = "";
+    for(let i=-TAB_SPAN;i<=TAB_SPAN;i++){
+      const fri = addDays(state.currentWeekStart, i*7);
+      const wk = state.weeks[fri];
+      const hasShifts = wk && wk.shifts && wk.shifts.length>0;
+      const tab = document.createElement("div");
+      tab.className = "tab" + (i===0 ? " active":"") + (hasShifts ? " has-shifts":"");
+      tab.textContent = fmtTabRange(fri);
+      tab.title = "Open Team week of " + fri;
+      tab.onclick = ()=>{ if(i!==0) switchWeek(fri); };
+      wrap.appendChild(tab);
+    }
+  }
+  document.getElementById("team-tabs-prev").onclick = ()=> switchWeek(addDays(state.currentWeekStart, -7));
+  document.getElementById("team-tabs-next").onclick = ()=> switchWeek(addDays(state.currentWeekStart, 7));
+  document.getElementById("team-tabs-today").onclick = ()=> switchWeek(snapToFriday(todayStr()));
+
+  // ---------------- Toolbar actions ----------------
+  document.getElementById("team-week-start").addEventListener("change", (e)=>{ switchWeek(e.target.value); });
+  document.getElementById("team-sched-title").addEventListener("input", (e)=>{ state.title = e.target.textContent; save(); });
+  document.getElementById("team-organization").addEventListener("input", (e)=>{
+    state.organization = e.target.value;
+    document.getElementById("team-org-label").textContent = state.organization;
+    document.getElementById("team-org-label").style.display = state.organization ? "block" : "none";
+    save();
+  });
+  document.getElementById("team-organization").addEventListener("change", (e)=> rememberOrg(e.target.value));
+  document.getElementById("team-sup-name").addEventListener("input", (e)=>{ state.supervisorName = e.target.textContent; save(); });
+  document.getElementById("team-sup-role").addEventListener("input", (e)=>{ state.supervisorRole = e.target.textContent; save(); });
+
+  // ---------------- Mode switch ----------------
+  function setMode(team){
+    document.body.classList.toggle("team-mode", team);
+    document.getElementById("mode-team-btn").classList.toggle("active-toggle", team);
+    document.getElementById("mode-single-btn").classList.toggle("active-toggle", !team);
+    if(team){
+      if(window.__closeSingleModeFloatingUI) window.__closeSingleModeFloatingUI();
+      renderAll();
+    } else {
+      closeDay(); // don't leave a stale day panel open for next time we switch back
+    }
+  }
+  document.getElementById("mode-team-btn").onclick = ()=> setMode(true);
+  document.getElementById("mode-single-btn").onclick = ()=> setMode(false);
+
+  renderAll();
+})();
+</script>
+</body>
+</html>
