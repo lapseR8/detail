@@ -709,6 +709,31 @@ one that closes the popover on clicks in truly empty space) didn't need
 any change — it already left shift-click behavior entirely to each shift's
 own listener.
 
+## Beta-prep: git history scrubbed — 2026-07-22 (following session)
+
+The security audit above cleaned live file content but not history — every
+prior commit still carried the developer's real name, real employer, and
+personal email (as commit author) in old diffs. Since the repo had briefly
+been public, that was a real, already-realized exposure, and it would have
+repeated on every future push.
+
+Fixed by squashing the entire history into a single clean commit (orphan
+branch → `git add -A` → one commit → replaced `main` → `git push --force`).
+Verified post-squash: `git log --oneline origin/main` shows exactly one
+commit, and a full `git grep` across it for the developer's name / real
+employer / personal email comes back clean. Old commit objects expired
+locally (`git reflog expire` + `git gc --prune=now`) so they're not sitting
+recoverable on disk either.
+
+Commit author identity going forward is the project's business contact
+(`campaignerstudios@gmail.com`, name "Campaigner Studios"), set via local
+`git config user.name`/`user.email` in this repo — not global, doesn't
+affect other repos.
+
+**Rule for future sessions:** don't assume `git log` is safe just because
+current files are clean — check history too before any public push, since a
+scrub of live content never touches prior commits.
+
 ## Security audit + fixes, GitHub repo made private, README rewritten for end users — 2026-07-22 (late session)
 
 External AI-assisted security/compatibility pass, at the developer's request, focused
