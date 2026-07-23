@@ -8,10 +8,19 @@ Currently macOS only (Apple Silicon).
 
 1. Download the latest `Detail-<version>-arm64.dmg`.
 2. Open it and drag **Detail** into your **Applications** folder.
-3. First launch: macOS will likely warn that Detail is from an unidentified developer (it isn't code-signed yet). Right-click (or Control-click) the app in Applications and choose **Open**, then confirm — you only need to do this once. If macOS instead says the app "is damaged and can't be opened," run this once in Terminal, then try again:
+3. First launch: macOS will block Detail since it isn't code-signed yet — you'll see a warning like *"Detail was blocked to protect your Mac."* This is expected and only takes a few seconds to get past:
+   1. Double-click **Detail** once and let it show the blocked warning — this registers it with macOS.
+   2. Go to **System Settings → Privacy & Security**, scroll to the Security section, and click **Open Anyway** next to Detail.
+   3. Confirm with your admin password. Detail will open normally from then on.
+
+   (That **Open Anyway** button disappears after about an hour, so do this step soon after step 1 rather than coming back to it later.)
+
+   If you'd rather skip the GUI, right-click (Control-click) the app and choose **Open**, then confirm — same effect, one step. If macOS instead says the app "is damaged and can't be opened," run this once in Terminal, then try again:
    ```bash
    xattr -cr /Applications/Detail.app
    ```
+
+   Note this warning reappears for anyone else who downloads Detail on their own Mac — it's a per-download, per-machine check, not a one-time fix for the app itself.
 
 Requires macOS 12 (Monterey) or later.
 
