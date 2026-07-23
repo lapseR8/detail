@@ -709,6 +709,16 @@ one that closes the popover on clicks in truly empty space) didn't need
 any change — it already left shift-click behavior entirely to each shift's
 own listener.
 
+## CSP broke the entire app — caught and fixed 2026-07-22 (following session)
+
+The CSP `<meta>` tag added in the security-audit session set `script-src 'self'` with no `'unsafe-inline'`. This app is two inline `<script>` blocks with no `src` attribute (see "What this is" at the top — no bundler, no build step, that's the whole architecture). That CSP setting silently blocks all inline JS from executing at all — `renderAll()` never ran, so the schedule window rendered completely empty (no shifts, no organization label, nothing), even though the on-disk data was intact and correctly migrated the whole time. This was **not a data-loss bug**, it just looked like one.
+
+The build that shipped this had already been smoke-tested and declared fine, but that test only checked the process stayed alive after launch (`pgrep`), never that anything actually rendered on screen — so the break went unnoticed through a full build/reinstall/"verified" cycle.
+
+**Fix:** added `'unsafe-inline'` back to `script-src`, matching `style-src` (already had it, same reasoning — this app is 100% first-party inline code, zero remote content, so the CSP's real job is blocking *injected* script, not the app's own).
+
+**Rule for future sessions:** a smoke test that only confirms the process didn't crash is not a functional verification. After any build meant to fix or ship something the developer will notice, take an actual screenshot (or equivalent) and confirm real content is on screen — not just that the app launched.
+
 ## Beta-prep: git history scrubbed — 2026-07-22 (following session)
 
 The security audit above cleaned live file content but not history — every
