@@ -807,3 +807,69 @@ limitations, with the old build/project-layout content moved to a short
 rather than duplicating it. Nothing here in `CLAUDE.md` changed structurally
 — this file stays the AI/dev source of truth, README is now the human-
 facing front door.
+
+## Native rewrite planned — SwiftUI, Phase 1 = single mode only — 2026-07-22
+
+Ethan wants this off Electron eventually — his stated reasons: wants it
+truly native, doesn't want to rely on "browser programming." A prior
+Claude instance in this same session walked the tradeoffs (full Swift
+rewrite vs. Tauri middle-ground) and Ethan chose full native. Willing to
+redo pieces "for real gains" but not an unlimited rebuild.
+
+**Decision, and the one big consequence flagged before starting:**
+SwiftUI/AppKit is macOS-only. Going native retires the Windows build
+entirely for this codebase — the config + first cross-build done
+2026-07-21 stays as-is for the existing Electron app, but there's no path
+from Swift to a Windows binary without a second, separate codebase down
+the line. Ethan explicitly accepted this tradeoff knowing he'd said he
+wanted to scale cross-platform.
+
+**What carries over language-agnostically (per the other instance's
+analysis, worth trusting — it's correct):**
+- The JSON schema (people, weeks, shifts, organization) — no redesign.
+- Atomic-write + rolling-backup logic — same idea, `FileManager` instead
+  of Node `fs`.
+- The hard-earned architectural rules already in this file — Team mode's
+  full isolation, "never mutate state mid-drag, commit only on release."
+
+**What does NOT carry over, rebuilt from scratch:** all of `index.html`'s
+visual/interaction layer — the grid, shift cards, and especially
+drag/resize. SwiftUI's `DragGesture` is a different model than the
+pointer-capture/ghost-clone approach this file's drag/resize section
+documents — that section will need a from-scratch native equivalent, not
+a port, once Phase 1 code exists.
+
+**One genuine native win:** screenshot export gets easier, not harder.
+`ImageRenderer` snapshots a SwiftUI view straight to an image — no
+html2canvas-style DOM hack, no injected grid-line elements just for
+capture.
+
+**Phase 1 scope (single mode only):** app shell + Swift data model + file
+save/load with backups, the week grid + drag-to-move + drag-to-resize,
+toolbar basics (week nav, organization, title/supervisor, add/remove
+person), native screenshot export.
+
+**Explicitly Phase 2, not started:** Team mode, month view, undo, context
+menu, keyboard shortcuts, backup/restore UI.
+
+**This session's move, given 90% session usage:** rather than start
+writing Swift now, created a folder skeleton only —
+`~/Desktop/Detail Native/` — mirroring the Phase 1 scope above (`App/`,
+`Models/`, `Persistence/`, `Views/{Grid,Toolbar,Export,Shared}/`,
+`Resources/`, `Docs/`). No Xcode project, no Swift source, no assets yet.
+Its own `Docs/PLAN.md` has the same scope breakdown as this entry, so the
+next session (explicitly planned to be **on Ethan's Windows PC**, per his
+own note — memory persists across machines since it's tied to the account,
+not the device) doesn't have to re-derive the plan from this file alone.
+
+**Copy over, don't edit in place:** Ethan wants files copied from
+`Detail v0.84/` into `Detail Native/` as the rewrite progresses, not
+edited where they sit — so the existing Electron app keeps working
+untouched for daily use while the rewrite is built alongside it.
+
+**Not yet decided / open for next session:** exact Xcode project setup
+(target name, bundle ID, deployment target), whether `Models/` types get
+`Codable` conformance mirroring the JSON keys 1:1 or a translation layer,
+and where `Docs/PLAN.md` graduates into a full CLAUDE.md-equivalent for
+the native project specifically (probably once Phase 1 has real code to
+document, not before).
