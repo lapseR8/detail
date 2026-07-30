@@ -4,7 +4,7 @@ const fs = require('fs');
 const os = require('os');
 
 const DATA_FILE = () => path.join(app.getPath('userData'), 'detail-schedule-data.json');
-const OLD_DATA_FILENAME = 'hitachi-schedule-data.json'; // this app's pre-rebrand filename, same userData dir
+const OLD_DATA_FILENAME = 'legacy-schedule-data.json'; // this app's pre-rebrand filename, same userData dir
 const BACKUP_DIR = () => path.join(app.getPath('userData'), 'schedule-backups');
 const MAX_BACKUPS = 60;
 
@@ -95,12 +95,12 @@ function writeTeamScheduleData(data) {
 // copy, not move, so the old install (if still present) is untouched.
 function legacyUserDataDir() {
   if (process.platform === 'darwin') {
-    return path.join(os.homedir(), 'Library', 'Application Support', 'Hitachi Schedule');
+    return path.join(os.homedir(), 'Library', 'Application Support', 'Legacy Schedule App');
   }
   if (process.platform === 'win32') {
-    return path.join(app.getPath('appData'), 'Hitachi Schedule');
+    return path.join(app.getPath('appData'), 'Legacy Schedule App');
   }
-  return path.join(os.homedir(), '.config', 'Hitachi Schedule');
+  return path.join(os.homedir(), '.config', 'Legacy Schedule App');
 }
 
 function migrateLegacyUserDataIfNeeded() {
