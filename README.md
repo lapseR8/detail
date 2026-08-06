@@ -2,11 +2,11 @@
 
 **Detail** is a desktop shift-scheduling app by **Campaigner Studios** — drag-and-drop weekly scheduling with one-click screenshot export, for handing a clean schedule to management or the team. Runs fully offline; nothing ever leaves your computer. *(Alpha — actively being built, expect rough edges.)*
 
-Currently macOS only (Apple Silicon).
+Currently macOS only (Universal — runs on both Apple Silicon and Intel Macs).
 
 ## Install
 
-1. Download the latest `Detail-<version>-arm64.dmg`.
+1. Download the latest `Detail-<version>-universal.dmg`.
 2. Open it and drag **Detail** into your **Applications** folder.
 3. First launch: macOS will block Detail since it isn't code-signed yet — you'll see a warning like *"Detail was blocked to protect your Mac."* This is expected and only takes a few seconds to get past:
    1. Double-click **Detail** once and let it show the blocked warning — this registers it with macOS.
@@ -48,7 +48,6 @@ Your data saves automatically as you go — no save button needed.
 ## Known limitations
 
 - **Unsigned build** — see the install workaround above. No Apple Developer cert yet, so no notarization.
-- **Apple Silicon only** — won't run on an Intel Mac.
 - **Alpha** — actively changing, features may shift between versions.
 
 ---
@@ -60,7 +59,7 @@ Build from source, project layout, data model, and architecture notes live in [`
 ```bash
 npm install
 npm start          # run in dev
-npm run build:arm  # build the macOS .dmg
+npm run build:mac-universal  # build the macOS .dmg (universal, arm64 + x64)
 npm run build:win  # build the Windows installer + portable .exe (unverified on real Windows)
 ```
 

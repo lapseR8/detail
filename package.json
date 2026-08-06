@@ -9,6 +9,7 @@
   "scripts": {
     "start": "electron .",
     "build:arm": "electron-builder --mac --arm64",
+    "build:mac-universal": "electron-builder --mac --universal",
     "build:win": "electron-builder --win --x64"
   },
   "devDependencies": {
@@ -28,7 +29,7 @@
     "mac": {
       "category": "public.app-category.productivity",
       "target": [
-        { "target": "dmg", "arch": ["arm64"] }
+        { "target": "dmg", "arch": ["universal"] }
       ],
       "icon": "build/icon.icns",
       "identity": null
