@@ -326,6 +326,16 @@
   #ctx-menu .ctx-person{display:flex;align-items:center;gap:8px;}
   #ctx-menu .ctx-swatch{width:12px;height:12px;border-radius:4px;flex:none;}
   body.capturing #ctx-menu{display:none !important;}
+  .week-menu{position:relative;display:inline-block;}
+  .week-menu-panel{
+    position:absolute;top:calc(100% + 4px);left:0;background:var(--panel-2);
+    border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 28px rgba(0,0,0,.5);
+    padding:6px;display:none;z-index:80;min-width:150px;
+  }
+  .week-menu-panel.open{display:block;}
+  .week-menu-item{padding:8px 10px;border-radius:6px;font-size:13px;cursor:pointer;color:var(--ink);white-space:nowrap;}
+  .week-menu-item:hover{background:#2c313a;}
+  .week-menu-sep{height:1px;background:var(--line);margin:4px 2px;}
 
   ::-webkit-scrollbar{width:10px;height:10px;}
   ::-webkit-scrollbar-track{background:transparent;}
@@ -550,8 +560,15 @@
     </div>
   </div>
   <div class="grp single-only">
-    <button class="btn" id="load-sample">Load sample</button>
-    <button class="btn ghost" id="clear-week">Clear week</button>
+    <div class="week-menu" id="week-menu-wrap">
+      <button class="btn ghost" id="week-menu-btn">Week ▾</button>
+      <div class="week-menu-panel" id="week-menu-panel">
+        <div class="week-menu-item" id="week-set-default">Set default</div>
+        <div class="week-menu-item" id="week-load-default">Load default</div>
+        <div class="week-menu-sep"></div>
+        <div class="week-menu-item" id="week-clear">Clear week</div>
+      </div>
+    </div>
   </div>
   <div class="spacer single-only"></div>
   <div class="grp single-only">
@@ -797,7 +814,9 @@
         {id:"p4", name:"K. Brooks", color:"#cf6b63"},
         {id:"p5", name:"S. Nguyen", color:"#f5dd8e"}
       ],
-      weeks: {}
+      weeks: {},
+      archivedWeeks: {},
+      defaultTemplate: null
     };
   }
 
@@ -900,6 +919,8 @@
     }
     parsed.currentWeekStart = snapToFriday(parsed.currentWeekStart);
     if(!parsed.weeks) parsed.weeks = {};
+    if(!parsed.archivedWeeks) parsed.archivedWeeks = {};
+    if(!('defaultTemplate' in parsed)) parsed.defaultTemplate = null;
     if(typeof parsed.organization !== "string") parsed.organization = "";
     return parsed;
   }
@@ -943,6 +964,7 @@
   let localSaveTimer = null;
 
   let state = load();
+  archiveOldWeeks();
 
   // Single-level, capped undo for the highest-risk actions (delete, clear
   // week, move, resize, remove person) — a snapshot of the mutable data
@@ -976,15 +998,39 @@
     window.scheduleAPI.load().then(diskState=>{
       if(diskState && diskState.version===3 && diskState.weeks){
         diskState.currentWeekStart = snapToFriday(diskState.currentWeekStart);
+        if(!diskState.archivedWeeks) diskState.archivedWeeks = {};
         state = diskState;
+        archiveOldWeeks();
         renderAll();
       }
     }).catch(()=>{});
   }
 
   function ensureWeek(dateStr){
-    if(!state.weeks[dateStr]) state.weeks[dateStr] = { shifts: [] };
+    if(state.weeks[dateStr]) return state.weeks[dateStr];
+    if(state.archivedWeeks && state.archivedWeeks[dateStr]){
+      state.weeks[dateStr] = state.archivedWeeks[dateStr];
+      delete state.archivedWeeks[dateStr];
+      return state.weeks[dateStr];
+    }
+    state.weeks[dateStr] = { shifts: [] };
     return state.weeks[dateStr];
+  }
+  // Moves any week more than 3 weeks (21 days) before today out of the
+  // active `weeks` map and into `archivedWeeks`. Keeps person-removal
+  // cleanup and the week-tab strip scoped to recent weeks; archived weeks
+  // are never deleted, and ensureWeek() transparently restores one the
+  // moment you navigate back to it (re-archived on the next sweep once
+  // you move away again).
+  function archiveOldWeeks(){
+    if(!state.archivedWeeks) state.archivedWeeks = {};
+    const cutoff = addDays(snapToFriday(todayStr()), -21);
+    Object.keys(state.weeks).forEach(wk=>{
+      if(wk < cutoff && wk !== state.currentWeekStart){
+        state.archivedWeeks[wk] = state.weeks[wk];
+        delete state.weeks[wk];
+      }
+    });
   }
   function currentShifts(){ return ensureWeek(state.currentWeekStart).shifts; }
   function setCurrentShifts(arr){ ensureWeek(state.currentWeekStart).shifts = arr; }
@@ -1213,7 +1259,18 @@
 
       const name = document.createElement("input");
       name.type = "text"; name.value = p.name;
+      name.readOnly = true;
+      name.style.pointerEvents = "none"; // clicks pass through to the row so dragging doesn't get eaten by text selection
       name.oninput = ()=>{ p.name = name.value; save(); renderDayCols(); refreshPopoverPeople(); };
+      name.addEventListener("blur", ()=>{ name.readOnly = true; name.style.pointerEvents = "none"; });
+      name.addEventListener("keydown", e=>{ if(e.key==="Enter") name.blur(); });
+      row.addEventListener("contextmenu", e=>{
+        e.preventDefault();
+        name.readOnly = false;
+        name.style.pointerEvents = "auto";
+        name.focus();
+        name.select();
+      });
 
       const rm = document.createElement("button");
       rm.className = "rm"; rm.textContent = "✕"; rm.title = "Remove person"; rm.setAttribute("aria-label", "Remove "+p.name);
@@ -1290,6 +1347,15 @@
         if(!gap || gap.durMin < 15) return;
         currentShifts().push({id:uid(), day:i, slot:gap.slot, durMin:gap.durMin, personId:armedPersonId});
         save(); renderDayCols(); renderWeekTabs();
+      });
+
+      col.addEventListener("contextmenu", e=>{
+        if(e.target.closest(".shift")) return; // shift's own handler covers that case
+        e.preventDefault();
+        const rect = col.getBoundingClientRect();
+        let slot = Math.floor((e.clientY - rect.top)/ROW_H);
+        slot = Math.max(0, Math.min(23, slot));
+        showEmptyContextMenu(i, slot, e.clientX, e.clientY);
       });
 
       col.addEventListener("dragover", e=>{ e.preventDefault(); col.classList.add("dragover"); });
@@ -1401,7 +1467,7 @@
   function attachMove(el, shift){
     let dragging=false, moved=false, rafPending=false;
     let startX=0, startY=0, grabDX=0, grabDY=0, ghostW=0, ghostH=0;
-    let lastX=0, lastY=0, suppressClick=false, ghost=null;
+    let lastX=0, lastY=0, suppressClick=false, ghost=null, isAltDrag=false;
 
     function applyMove(){
       rafPending = false;
@@ -1418,11 +1484,15 @@
         moved = true;
         suppressClick = true;
         document.body.classList.add("no-select");
-        el.classList.add("drag-source-hidden"); // hide the real card in place, untouched
+        // Option/Alt-drag duplicates instead of moving: the real card stays
+        // put, only the ghost floats, and onUp creates a new shift instead
+        // of relocating this one.
+        if(!isAltDrag) el.classList.add("drag-source-hidden"); // hide the real card in place, untouched
 
         ghost = el.cloneNode(true);
         ghost.classList.remove("drag-source-hidden");
         ghost.classList.add("dragging-ghost");
+        if(isAltDrag) ghost.style.outline = "2px dashed rgba(0,0,0,.5)"; // visual cue this is a copy, not the original moving
         ghost.style.position = "fixed";
         ghost.style.width = ghostW+"px";
         ghost.style.height = ghostH+"px";
@@ -1465,8 +1535,13 @@
       let slot = Math.round((finalY - grabDY - rect.top)/ROW_H);
       slot = Math.max(0, Math.min(24-durHours, slot));
       pushUndo();
-      shift.day = parseInt(col.dataset.day, 10);
-      shift.slot = slot;
+      if(isAltDrag){
+        // Duplicate: original shift is untouched, a new one lands at the drop point.
+        currentShifts().push({id:uid(), day:parseInt(col.dataset.day,10), slot, durMin:shift.durMin, personId:shift.personId});
+      } else {
+        shift.day = parseInt(col.dataset.day, 10);
+        shift.slot = slot;
+      }
       save(); renderDayCols(); renderWeekTabs();
     }
 
@@ -1481,6 +1556,7 @@
       e.preventDefault(); // stops the browser from starting native text-selection/drag on mousedown —
       // without this, native selection can race our pointer capture and explains both the
       // "selects text like a webpage" symptom and the drag dying after one step.
+      isAltDrag = e.altKey; // Option(Mac)/Alt-held drag duplicates the shift instead of moving it
       dragging = true; moved = false;
       startX = e.clientX; startY = e.clientY; lastX = startX; lastY = startY;
       const rect = el.getBoundingClientRect();
@@ -1689,8 +1765,9 @@
 
   // ---------------- Right-click context menu ----------------
   let ctxTarget = null;
-  let ctxMode = "main"; // "main" | "guard"
+  let ctxMode = "main"; // "main" | "guard" | "empty"
   let shiftClipboard = null; // {personId, durMin}
+  let ctxEmptyDay = null, ctxEmptySlot = null;
 
   function showContextMenu(shift, x, y){
     ctxTarget = shift;
@@ -1703,20 +1780,64 @@
     menu.style.left = Math.min(window.innerWidth-w-8, x)+"px";
     menu.style.top = Math.min(window.innerHeight-h-8, y)+"px";
   }
+  // Right-click on empty grid space (not a shift) — offers just "Paste
+  // shift" when something's on the clipboard. Reuses #ctx-menu rather than
+  // a second element so there's only ever one menu open/positioned at a time.
+  function showEmptyContextMenu(day, slot, x, y){
+    ctxTarget = null;
+    ctxMode = "empty";
+    ctxEmptyDay = day; ctxEmptySlot = slot;
+    hidePopover();
+    renderContextMenu();
+    const menu = document.getElementById("ctx-menu");
+    menu.style.display = "block";
+    const w = menu.offsetWidth || 180, h = menu.offsetHeight || 160;
+    menu.style.left = Math.min(window.innerWidth-w-8, x)+"px";
+    menu.style.top = Math.min(window.innerHeight-h-8, y)+"px";
+  }
+  function pasteShiftAt(day, desiredSlot){
+    if(!shiftClipboard) return;
+    const dayShifts = dayShiftsSorted(day);
+    // Same end-of-existing-shift snapping as drag-drop-from-sidebar creation.
+    let startSlot = 0, nextStart = 24;
+    for(const s of dayShifts){
+      const end = s.slot + s.durMin/60;
+      if(end <= desiredSlot) startSlot = end;
+      else { nextStart = Math.min(nextStart, s.slot); break; }
+    }
+    const maxDur = Math.max(0, nextStart - startSlot);
+    const durMin = Math.min(shiftClipboard.durMin, maxDur*60);
+    if(durMin < 15) return; // no room to paste here
+    pushUndo();
+    currentShifts().push({id:uid(), day, slot:startSlot, durMin, personId: shiftClipboard.personId});
+    save(); renderDayCols(); renderWeekTabs();
+  }
   function hideContextMenu(){
     document.getElementById("ctx-menu").style.display = "none";
-    ctxTarget = null; ctxMode = "main";
+    ctxTarget = null; ctxMode = "main"; ctxEmptyDay = null; ctxEmptySlot = null;
   }
   document.addEventListener("contextmenu", (e)=>{
     const path = e.composedPath();
     const inShift = path.some(el => el.classList && el.classList.contains("shift"));
-    if(!inShift) hideContextMenu();
+    const inDayCol = path.some(el => el.classList && el.classList.contains("day-col"));
+    if(!inShift && !inDayCol) hideContextMenu();
   });
   window.addEventListener("scroll", hideContextMenu, true);
 
   function renderContextMenu(){
     const menu = document.getElementById("ctx-menu");
     menu.innerHTML = "";
+    if(ctxMode==="empty"){
+      const item = document.createElement("div");
+      item.className = "ctx-item" + (shiftClipboard ? "" : " disabled");
+      item.textContent = "Paste shift";
+      if(shiftClipboard) item.onclick = ()=>{
+        pasteShiftAt(ctxEmptyDay, ctxEmptySlot);
+        hideContextMenu();
+      };
+      menu.appendChild(item);
+      return;
+    }
     if(!ctxTarget) return;
 
     if(ctxMode==="guard"){
@@ -1853,12 +1974,32 @@
     state.people.push({id:uid(), name:"New Person", color: colors[state.people.length % colors.length]});
     save(); renderAll();
   };
-  document.getElementById("load-sample").onclick = ()=>{
-    if(!confirm("Replace this week's shifts with the sample schedule?")) return;
-    setCurrentShifts(sampleShifts(state.people));
+  document.getElementById("week-menu-btn").onclick = (e)=>{
+    e.stopPropagation();
+    document.getElementById("week-menu-panel").classList.toggle("open");
+  };
+  document.addEventListener("click", (e)=>{
+    const panel = document.getElementById("week-menu-panel");
+    const wrap = document.getElementById("week-menu-wrap");
+    if(panel && panel.classList.contains("open") && wrap && !wrap.contains(e.target)) panel.classList.remove("open");
+  });
+  document.getElementById("week-set-default").onclick = ()=>{
+    document.getElementById("week-menu-panel").classList.remove("open");
+    if(!confirm("Save this week's shifts as the default template?")) return;
+    state.defaultTemplate = JSON.parse(JSON.stringify(currentShifts()));
+    save();
+  };
+  document.getElementById("week-load-default").onclick = ()=>{
+    document.getElementById("week-menu-panel").classList.remove("open");
+    if(!state.defaultTemplate || !state.defaultTemplate.length){ alert("No default template set yet — use \"Set default\" on a week first."); return; }
+    if(!confirm("Replace this week's shifts with the default template?")) return;
+    pushUndo();
+    const cloned = state.defaultTemplate.map(s=>({...s, id: uid()}));
+    setCurrentShifts(cloned);
     save(); renderDayCols(); renderWeekTabs();
   };
-  document.getElementById("clear-week").onclick = ()=>{
+  document.getElementById("week-clear").onclick = ()=>{
+    document.getElementById("week-menu-panel").classList.remove("open");
     if(!confirm("Remove all shifts from this week? Other weeks are unaffected.")) return;
     pushUndo();
     setCurrentShifts([]); save(); renderDayCols(); renderWeekTabs();
@@ -2076,7 +2217,8 @@
       supervisorRole: "Site Supervisor",
       defaultLengthMin: 8*60,
       people: [],
-      weeks: {}
+      weeks: {},
+      archivedWeeks: {}
     };
   }
 
@@ -2086,6 +2228,7 @@
     if(!parsed) parsed = defaultTeamState();
     parsed.currentWeekStart = snapToFriday(parsed.currentWeekStart);
     if(!parsed.weeks) parsed.weeks = {};
+    if(!parsed.archivedWeeks) parsed.archivedWeeks = {};
     if(!parsed.people) parsed.people = [];
     if(typeof parsed.organization !== "string") parsed.organization = "";
     Object.values(parsed.weeks).forEach(normalizeLanesForWeek);
@@ -2120,6 +2263,7 @@
   window.addEventListener("beforeunload", flushSave);
 
   let state = load();
+  archiveOldWeeks();
 
   // Same single-level capped undo pattern as single mode (see the comment
   // there) — independent stack, since Team mode's data is fully separate.
@@ -2148,14 +2292,38 @@
       if(diskState && diskState.version===1 && diskState.weeks){
         diskState.currentWeekStart = snapToFriday(diskState.currentWeekStart);
         if(!diskState.people) diskState.people = [];
+        if(!diskState.archivedWeeks) diskState.archivedWeeks = {};
         Object.values(diskState.weeks).forEach(normalizeLanesForWeek);
         state = diskState;
+        archiveOldWeeks();
         renderAll();
       }
     }).catch(()=>{});
   }
 
-  function ensureWeek(dateStr){ if(!state.weeks[dateStr]) state.weeks[dateStr] = { shifts: [] }; return state.weeks[dateStr]; }
+  function ensureWeek(dateStr){
+    if(state.weeks[dateStr]) return state.weeks[dateStr];
+    if(state.archivedWeeks && state.archivedWeeks[dateStr]){
+      state.weeks[dateStr] = state.archivedWeeks[dateStr];
+      delete state.archivedWeeks[dateStr];
+      normalizeLanesForWeek(state.weeks[dateStr]);
+      return state.weeks[dateStr];
+    }
+    state.weeks[dateStr] = { shifts: [] };
+    return state.weeks[dateStr];
+  }
+  // See the single-mode comment above the identical function — same
+  // 3-week cutoff, same "restored transparently by ensureWeek()" design.
+  function archiveOldWeeks(){
+    if(!state.archivedWeeks) state.archivedWeeks = {};
+    const cutoff = addDays(snapToFriday(todayStr()), -21);
+    Object.keys(state.weeks).forEach(wk=>{
+      if(wk < cutoff && wk !== state.currentWeekStart){
+        state.archivedWeeks[wk] = state.weeks[wk];
+        delete state.weeks[wk];
+      }
+    });
+  }
   function currentShifts(){ return ensureWeek(state.currentWeekStart).shifts; }
   function setCurrentShifts(arr){ ensureWeek(state.currentWeekStart).shifts = arr; }
   function dayShiftsSorted(dayIndex){ return currentShifts().filter(s=>s.day===dayIndex).sort((a,b)=>a.slot-b.slot); }
@@ -2374,7 +2542,18 @@
 
       const name = document.createElement("input");
       name.type = "text"; name.value = p.name;
+      name.readOnly = true;
+      name.style.pointerEvents = "none"; // clicks pass through to the row so dragging doesn't get eaten by text selection
       name.oninput = ()=>{ p.name = name.value; save(); if(openDayIndex!==null) renderDayLanes(); refreshTeamPopoverPeople(); };
+      name.addEventListener("blur", ()=>{ name.readOnly = true; name.style.pointerEvents = "none"; });
+      name.addEventListener("keydown", e=>{ if(e.key==="Enter") name.blur(); });
+      row.addEventListener("contextmenu", e=>{
+        e.preventDefault();
+        name.readOnly = false;
+        name.style.pointerEvents = "auto";
+        name.focus();
+        name.select();
+      });
 
       const rm = document.createElement("button");
       rm.className = "rm"; rm.textContent = "✕"; rm.title = "Remove person"; rm.setAttribute("aria-label", "Remove "+p.name);
