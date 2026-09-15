@@ -4,6 +4,10 @@ node_modules/
 # Build output (regenerate via `npm run build:arm` / `npm run build:win`)
 dist/
 
+# Release DMGs get moved here from dist/ after each build for easy access —
+# they're 100MB+ and GitHub hard-rejects anything over that. Never track these.
+*.dmg
+
 # Old branded .dmg's kept for reference, not source — see CLAUDE.md's
 # 2026-07-19 cleanup audit for why these were kept locally instead of deleted.
 # Excluded from git regardless: 182MB of binaries with no diff value.

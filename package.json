@@ -1,6 +1,6 @@
 {
   "name": "detail",
-  "version": "0.84.10",
+  "version": "0.84.11",
   "description": "Detail — a weekly shift-scheduling product by Campaigner Studios. Draggable shift planner with screenshot export.",
   "main": "main.js",
   "author": "Campaigner Studios",
@@ -48,7 +48,7 @@
       "createStartMenuShortcut": true
     },
     "dmg": {
-      "title": "Detail 0.84.10 — Campaigner Studios"
+      "title": "Detail 0.84.11 — Campaigner Studios"
     }
   }
 }
