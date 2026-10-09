@@ -240,6 +240,18 @@
     will-change:left, top;
   }
   .shift.drag-source-hidden{opacity:0;}
+  /* Overlapping shifts: drawn as visual segments (.seg) so a shift sits
+     alongside others only while they overlap, and widens back to full
+     width once they end. Plain CSS boxes (not clip-path) so the screenshot
+     export renders them correctly. */
+  .shift.multi{background:none !important;border:none;box-shadow:none;overflow:visible;padding:0;pointer-events:none;}
+  .shift.multi > *{pointer-events:auto;}
+  .shift .seg{
+    position:absolute;border:1px solid rgba(0,0,0,.14);box-shadow:0 1px 1px rgba(0,0,0,.06);
+    padding:5px 7px;overflow:hidden;
+    background-image:repeating-linear-gradient(to bottom, transparent 0, transparent calc(var(--row-h) - 1px), rgba(0,0,0,.16) calc(var(--row-h) - 1px), rgba(0,0,0,.16) var(--row-h));
+  }
+  .shift.dragging-ghost.multi, .shift.dragging-ghost.multi *{pointer-events:none !important;}
   body.no-select, body.no-select *{
     user-select:none !important;-webkit-user-select:none !important;
   }
@@ -1367,11 +1379,62 @@
     }
   }
 
+  // Where a newly dropped/pasted shift lands. Dropping onto an existing shift
+  // places it right there (it slides in alongside); dropping in free space
+  // keeps the old snap-to-end-of-previous-shift, clamped to the next shift.
+  function placeSlot(dayShifts, desiredSlot, wantMin){
+    const covered = dayShifts.some(s => s.slot <= desiredSlot + 1e-6 && desiredSlot < s.slot + s.durMin/60 - 1e-6);
+    let startSlot = desiredSlot, limit = 24;
+    if(!covered){
+      startSlot = 0;
+      for(const s of dayShifts){
+        const end = s.slot + s.durMin/60;
+        if(end <= desiredSlot) startSlot = Math.max(startSlot, end);
+        else { limit = Math.min(limit, s.slot); break; }
+      }
+    }
+    const durMin = Math.min(wantMin, Math.max(0, limit - startSlot)*60);
+    return durMin >= 15 ? {slot:startSlot, durMin} : null;
+  }
+
+  // Per-day overlap layout (render-time only, nothing persisted): greedy lane
+  // assignment, then each shift is cut into vertical segments, each given the
+  // horizontal slice (index/n of n concurrent shifts) it holds at that time.
+  function layoutDay(dayShifts){
+    const items = dayShifts.map(s=>({s, a:s.slot, b:s.slot+s.durMin/60}))
+      .sort((p,q)=> p.a-q.a || p.b-q.b || (p.s.id<q.s.id?-1:1));
+    const laneEnd = [];
+    items.forEach(it=>{
+      let l = laneEnd.findIndex(e=>e <= it.a+1e-6);
+      if(l===-1) l = laneEnd.length;
+      laneEnd[l] = it.b; it.lane = l;
+    });
+    const pts = Array.from(new Set(items.flatMap(it=>[it.a,it.b]))).sort((x,y)=>x-y);
+    const out = new Map();
+    items.forEach(it=>{
+      const segs = [];
+      for(let k=0;k<pts.length-1;k++){
+        const y0 = pts[k], y1 = pts[k+1];
+        if(y1 <= it.a+1e-6 || y0 >= it.b-1e-6) continue;
+        const mid = (y0+y1)/2;
+        const conc = items.filter(o=>o.a<=mid && mid<o.b).sort((p,q)=>p.lane-q.lane);
+        const idx = conc.indexOf(it), n = conc.length;
+        const x0 = idx/n, x1 = (idx+1)/n;
+        const last = segs[segs.length-1];
+        if(last && Math.abs(last.x0-x0)<1e-6 && Math.abs(last.x1-x1)<1e-6) last.y1 = y1;
+        else segs.push({y0, y1, x0, x1});
+      }
+      out.set(it.s.id, segs);
+    });
+    return out;
+  }
+
   function renderDayCols(){
     const wrap = document.getElementById("day-cols");
     wrap.innerHTML = "";
     for(let i=0;i<NUM_DAYS;i++){
       const dayShifts = dayShiftsSorted(i); // computed once, reused below for both rendering and the drop handler
+      const layout = layoutDay(dayShifts);
       const col = document.createElement("div");
       col.className = "day-col";
       col.style.height = (24*ROW_H)+"px";
@@ -1409,48 +1472,65 @@
         let desiredSlot = Math.floor((e.clientY - rect.top)/ROW_H);
         desiredSlot = Math.max(0, Math.min(23, desiredSlot));
 
-        // snap new shift to the end of whatever already occupies earlier time in this column
-        let startSlot = 0;
-        let nextStart = 24;
-        for(const s of dayShifts){
-          const end = s.slot + s.durMin/60;
-          if(end <= desiredSlot) startSlot = end;
-          else { nextStart = Math.min(nextStart, s.slot); break; }
-        }
-        const maxDur = Math.max(0, nextStart - startSlot);
-        const durMin = Math.min(state.defaultLengthMin, maxDur*60);
-        if(durMin < 15) return; // no room to place a shift here
+        const spot = placeSlot(dayShifts, desiredSlot, state.defaultLengthMin);
+        if(!spot) return; // no room to place a shift here
+        if(blockIfLocked()) return;
 
-        currentShifts().push({id:uid(), day:i, slot:startSlot, durMin, personId});
+        currentShifts().push({id:uid(), day:i, slot:spot.slot, durMin:spot.durMin, personId});
         save(); renderDayCols(); renderWeekTabs();
       });
 
-      dayShifts.forEach(s=>{ col.appendChild(buildShiftEl(s)); });
+      dayShifts.forEach(s=>{ col.appendChild(buildShiftEl(s, layout.get(s.id))); });
 
       wrap.appendChild(col);
     }
   }
 
-  function buildShiftEl(shift){
+  function buildShiftEl(shift, segs){
     const p = personById(shift.personId);
     const el = document.createElement("div");
     el.className = "shift";
     const heightPx = shift.durMin/60*ROW_H;
     el.style.top = (shift.slot*ROW_H)+"px";
     el.style.height = heightPx+"px";
-    el.style.backgroundColor = p ? p.color : "#ddd";
     el.dataset.id = shift.id;
+    const color = p ? p.color : "#ddd";
+
+    // Overlap layout: more than one segment, or a single partial-width one,
+    // means this shift shares time with another (see layoutDay).
+    const multi = !!segs && segs.length>0 && (segs.length > 1 || segs[0].x0 > 1e-6 || segs[0].x1 < 1-1e-6);
+    let host = el, hostHeightPx = heightPx;
+    if(multi){
+      el.classList.add("multi");
+      let tallIdx = 0;
+      segs.forEach((g,k)=>{ if((g.y1-g.y0) > (segs[tallIdx].y1-segs[tallIdx].y0)+1e-6) tallIdx = k; });
+      segs.forEach((g,k)=>{
+        const seg = document.createElement("div");
+        seg.className = "seg";
+        const l = g.x0>1e-6 ? 1 : 0, r = g.x1<1-1e-6 ? 1 : 0;
+        seg.style.left = "calc("+(g.x0*100)+"% + "+l+"px)";
+        seg.style.width = "calc("+((g.x1-g.x0)*100)+"% - "+(l+r)+"px)";
+        seg.style.top = ((g.y0-shift.slot)*ROW_H)+"px";
+        seg.style.height = ((g.y1-g.y0)*ROW_H)+"px";
+        seg.style.backgroundColor = color;
+        seg.style.borderRadius = (k===0?"7px 7px":"0 0")+" "+(k===segs.length-1?"7px 7px":"0 0");
+        el.appendChild(seg);
+        if(k===tallIdx){ host = seg; hostHeightPx = (g.y1-g.y0)*ROW_H; }
+      });
+    } else {
+      el.style.backgroundColor = color;
+    }
 
     const label = document.createElement("span");
     label.className = "label-text";
     label.textContent = p ? p.name : "Unassigned";
-    el.appendChild(label);
+    host.appendChild(label);
 
-    if(heightPx > 40){
+    if(hostHeightPx > 40){
       const lenLbl = document.createElement("span");
       lenLbl.className = "len-label";
       lenLbl.textContent = fmtLen(shift.durMin);
-      el.appendChild(lenLbl);
+      host.appendChild(lenLbl);
     }
 
     const del = document.createElement("button");
@@ -1471,6 +1551,14 @@
     const rsTop = document.createElement("div");
     rsTop.className = "rs-top";
     el.appendChild(rsTop);
+
+    if(multi){
+      // Handles/delete button sit on the segment they belong to, not the full-width box.
+      const f = segs[0], l = segs[segs.length-1];
+      rsTop.style.left = (f.x0*100)+"%"; rsTop.style.right = "auto"; rsTop.style.width = ((f.x1-f.x0)*100)+"%";
+      rs.style.left = (l.x0*100)+"%"; rs.style.right = "auto"; rs.style.width = ((l.x1-l.x0)*100)+"%";
+      del.style.right = "calc("+((1-f.x1)*100)+"% + 4px)";
+    }
 
     attachMove(el, shift);
     attachResize(rs, el, shift, false);
@@ -1533,6 +1621,7 @@
         ghost = el.cloneNode(true);
         ghost.classList.remove("drag-source-hidden");
         ghost.classList.add("dragging-ghost");
+        ghost.style.outline = isAltDrag ? "2px dashed rgba(0,0,0,.5)" : "";
         if(isAltDrag) ghost.style.outline = "2px dashed rgba(0,0,0,.5)"; // visual cue this is a copy, not the original moving
         ghost.style.position = "fixed";
         ghost.style.width = ghostW+"px";
@@ -1846,19 +1935,11 @@
   function pasteShiftAt(day, desiredSlot){
     if(!shiftClipboard) return;
     const dayShifts = dayShiftsSorted(day);
-    // Same end-of-existing-shift snapping as drag-drop-from-sidebar creation.
-    let startSlot = 0, nextStart = 24;
-    for(const s of dayShifts){
-      const end = s.slot + s.durMin/60;
-      if(end <= desiredSlot) startSlot = end;
-      else { nextStart = Math.min(nextStart, s.slot); break; }
-    }
-    const maxDur = Math.max(0, nextStart - startSlot);
-    const durMin = Math.min(shiftClipboard.durMin, maxDur*60);
-    if(durMin < 15) return; // no room to paste here
+    const spot = placeSlot(dayShifts, desiredSlot, shiftClipboard.durMin); // same rules as drag-drop creation
+    if(!spot) return; // no room to paste here
     if(blockIfLocked()) return;
     pushUndo();
-    currentShifts().push({id:uid(), day, slot:startSlot, durMin, personId: shiftClipboard.personId});
+    currentShifts().push({id:uid(), day, slot:spot.slot, durMin:spot.durMin, personId: shiftClipboard.personId});
     save(); renderDayCols(); renderWeekTabs();
   }
   function hideContextMenu(){
